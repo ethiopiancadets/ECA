@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Training & Courses – Ethiopian Cadet Association</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --navy:#0a1628;--navy-mid:#112240;--blue:#1a4a8a;--gold:#c8a84b;--gold-light:#e8c96b;
+      --white:#f8f6f0;--gray:#8a9ab5;--light-bg:#f4f1ea;--border:#e0e6ef;
+      --green:#2a7a4a;--red:#c0392b;--orange:#d4820a;--purple:#5040a0;
+      --font-display:'Playfair Display',Georgia,serif;--font-body:'Barlow',sans-serif;
+      --radius:10px;--shadow:0 8px 32px rgba(10,22,40,0.12);--transition:0.25s ease;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:var(--font-body);background:var(--white);color:var(--navy);line-height:1.7;}
+    a{text-decoration:none;color:inherit;}
+    .container{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,168,75,0.2);}
+    .nav-container{max-width:1180px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between;}
+    .logo{display:flex;align-items:center;gap:10px;}
+    .logo-main{font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--gold);}
+    .logo-sub{font-size:10px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;display:block;}
+    .nav-links{display:flex;align-items:center;gap:6px;list-style:none;}
+    .nav-links a{color:rgba(248,246,240,0.8);font-size:13.5px;font-weight:500;padding:6px 10px;border-radius:5px;transition:var(--transition);}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold);}
+    .nav-cta{background:var(--gold)!important;color:var(--navy)!important;padding:7px 18px!important;border-radius:8px!important;font-weight:700!important;}
+    .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+    .hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px;}
+
+    .page-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,var(--blue) 100%);padding:130px 0 60px;position:relative;overflow:hidden;}
+    .page-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(200,168,75,0.07) 0%,transparent 60%);}
+    .page-hero .container{position:relative;z-index:1;}
+    .page-hero-tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+    .page-hero h1{font-family:var(--font-display);font-size:clamp(34px,5vw,58px);font-weight:900;color:var(--white);line-height:1.1;}
+    .page-hero p{color:var(--gray);font-size:16px;max-width:620px;margin-top:14px;}
+    .hero-actions{margin-top:24px;display:flex;gap:14px;flex-wrap:wrap;}
+    .btn{display:inline-block;padding:13px 28px;font-family:var(--font-body);font-weight:600;font-size:14px;border-radius:var(--radius);transition:var(--transition);cursor:pointer;border:2px solid transparent;}
+    .btn-primary{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+    .btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);}
+
+    .page-content{padding:60px 0 80px;}
+
+    /* TYPE TABS */
+    .type-tabs{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;}
+    .type-tab{padding:12px 22px;border-radius:30px;border:1.5px solid var(--border);background:white;font-family:var(--font-body);font-size:14px;font-weight:700;cursor:pointer;transition:var(--transition);color:var(--navy);}
+    .type-tab.active{background:var(--navy);color:var(--gold);border-color:var(--navy);}
+    .type-tab:hover:not(.active){border-color:var(--navy);}
+
+    .filters-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;align-items:center;}
+    .search-input,.filter-select{padding:11px 16px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:var(--font-body);font-size:14px;outline:none;background:white;}
+    .search-input{flex:1;min-width:200px;}
+    .filter-select:focus,.search-input:focus{border-color:var(--blue);}
+
+    .courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px;}
+    .course-card{background:white;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;transition:var(--transition);display:flex;flex-direction:column;}
+    .course-card:hover{border-color:var(--navy);box-shadow:var(--shadow);transform:translateY(-3px);}
+    .course-card-top{padding:24px;color:var(--white);}
+    .top-online{background:linear-gradient(135deg,var(--navy),var(--blue));}
+    .top-presea{background:linear-gradient(135deg,#1a5a3a,#2a8a5a);}
+    .top-postsea{background:linear-gradient(135deg,#5a3a1a,#a0701a);}
+    .training-type-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;background:rgba(255,255,255,0.2);color:var(--white);margin-bottom:10px;}
+    .course-title{font-family:var(--font-display);font-size:18px;font-weight:900;line-height:1.3;}
+    .course-instructor{font-size:13px;color:rgba(248,246,240,0.7);margin-top:6px;}
+    .course-card-body{padding:20px;flex:1;display:flex;flex-direction:column;}
+    .course-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#5a6a7a;margin-bottom:12px;}
+    .course-meta span{display:flex;align-items:center;gap:5px;}
+    .course-desc{font-size:13.5px;color:#5a6a7a;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;}
+    .seats-warning{font-size:12px;color:var(--orange);font-weight:700;margin-top:8px;}
+    .course-card-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:10px;}
+    .enroll-btn{flex:1;padding:10px;background:var(--navy);color:var(--gold);border:none;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:700;cursor:pointer;transition:var(--transition);}
+    .enroll-btn:hover{background:var(--blue);}
+    .enroll-btn:disabled{background:var(--border);color:var(--gray);cursor:not-allowed;}
+    .view-link-btn{padding:10px 14px;background:var(--light-bg);color:var(--navy);border:none;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);}
+    .view-link-btn:hover{background:var(--border);}
+
+    .level-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+    .level-Beginner{background:#e6fff4;color:var(--green);}
+    .level-Intermediate{background:#fff8e6;color:var(--orange);}
+    .level-Advanced{background:#ffe6e6;color:var(--red);}
+
+    .empty-state,.loading-state{text-align:center;padding:60px 20px;color:var(--gray);}
+    .empty-state .icon{font-size:48px;margin-bottom:16px;}
+    .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    .modal-overlay{position:fixed;inset:0;background:rgba(10,22,40,0.65);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:white;border-radius:16px;padding:36px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.3);position:relative;}
+    .modal-close{position:absolute;top:20px;right:20px;background:var(--light-bg);border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:16px;}
+    .modal-title{font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--navy);margin-bottom:18px;padding-right:40px;}
+    .form-group{margin-bottom:14px;}
+    .form-group label{display:block;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--navy);margin-bottom:6px;}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:var(--font-body);font-size:14px;outline:none;transition:var(--transition);}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .error-msg{background:#fff0f0;border:1px solid #ffb3b3;color:var(--red);padding:10px 14px;border-radius:var(--radius);margin-bottom:14px;font-size:13px;display:none;}
+    .error-msg.show{display:block;}
+    .submit-btn{width:100%;padding:14px;background:var(--navy);color:var(--gold);border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;transition:var(--transition);margin-top:8px;}
+    .submit-btn:hover{background:var(--blue);}
+    .enroll-success{display:none;text-align:center;padding:20px;}
+    .enroll-success.show{display:block;}
+
+    .footer{background:#060e1a;color:rgba(248,246,240,0.5);padding:30px 24px;text-align:center;font-size:13px;}
+
+    @media(max-width:768px){
+      .hamburger{display:flex;}
+      .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:20px;gap:4px;border-bottom:1px solid rgba(200,168,75,0.2);}
+      .nav-links.open{display:flex;}
+      .form-row{grid-template-columns:1fr;}
+      .courses-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo">
+      <span style="font-size:22px">⚓</span>
+      <div><span class="logo-main">ECA</span><span class="logo-sub">Ethiopian Cadet Association</span></div>
+    </a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="courses.html" class="active">Training &amp; Courses</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="jobs.html">Job Board</a></li>
+      <li><a href="news.html">News & Events</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-cta">Join Us</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-tag">Training &amp; Education</span>
+    <h1>Training &amp; Courses</h1>
+    <p>From Pre-Sea preparation to Post-Sea upskilling and online certifications — find every training opportunity submitted by ECA instructors and partners, all in one place.</p>
+    <div class="hero-actions">
+      <a href="course-submit.html" class="btn btn-primary">📚 Submit a Training or Course (Instructors)</a>
+    </div>
+  </div>
+</section>
+
+<section class="page-content">
+  <div class="container">
+
+    <div class="type-tabs" id="typeTabs">
+      <button class="type-tab active" data-type="" onclick="setTypeFilter('', this)">All</button>
+      <button class="type-tab" data-type="Pre-Sea Training" onclick="setTypeFilter('Pre-Sea Training', this)">⚓ Pre-Sea Training</button>
+      <button class="type-tab" data-type="Post-Sea Training" onclick="setTypeFilter('Post-Sea Training', this)">🎓 Post-Sea Training</button>
+      <button class="type-tab" data-type="Online Course" onclick="setTypeFilter('Online Course', this)">💻 Online Courses</button>
+    </div>
+
+    <div class="filters-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search by title or instructor..." oninput="filterCourses()"/>
+      <select class="filter-select" id="categoryFilter" onchange="filterCourses()">
+        <option value="">All Categories</option>
+        <option value="Deck">Deck</option>
+        <option value="Engine">Engine</option>
+        <option value="Safety">Safety / STCW</option>
+        <option value="Management">Management</option>
+        <option value="Other">Other</option>
+      </select>
+      <select class="filter-select" id="levelFilter" onchange="filterCourses()">
+        <option value="">All Levels</option>
+        <option value="Beginner">Beginner</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Advanced">Advanced</option>
+      </select>
+    </div>
+
+    <div id="coursesContainer">
+      <div class="loading-state"><div class="spinner"></div>Loading...</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><p>© 2025 Ethiopian Cadet Association. All rights reserved.</p></footer>
+
+<!-- ENROLL MODAL -->
+<div class="modal-overlay" id="enrollModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEnrollModal()">✕</button>
+    <div class="modal-title" id="enrollModalTitle">Enroll</div>
+    <div id="enrollDetailBox" style="margin-bottom:16px"></div>
+    <div class="error-msg" id="enrollError"></div>
+    <div id="enrollFormWrap">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="enrollName"/></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="enrollEmail"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Phone</label><input type="tel" id="enrollPhone"/></div>
+        <div class="form-group"><label>Current Rank</label><input type="text" id="enrollRank" placeholder="e.g. Cadet, 3rd Engineer"/></div>
+      </div>
+      <div class="form-group"><label>Message (Optional)</label><textarea id="enrollMessage" placeholder="Tell us about your background or goals..." style="min-height:80px"></textarea></div>
+      <button class="submit-btn" onclick="submitEnrollment()">Enroll Now ✓</button>
+    </div>
+    <div class="enroll-success" id="enrollSuccess">
+      <div style="font-size:48px;margin-bottom:12px">🎉</div>
+      <h3 style="font-family:var(--font-display);font-size:20px;margin-bottom:8px">Enrollment Submitted!</h3>
+      <p style="font-size:14px;color:var(--gray)">The instructor will contact you shortly with further details.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://plxsxxdkumpuehzpemco.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBseHN4eGRrdW1wdWVoenBlbWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg4NzAsImV4cCI6MjA5NjMzNDg3MH0.azZ6388Ry7v2DXx-OmhXsJtmj6-Yk5PmgDy8nIzTtY4';
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let allCourses = [];
+  let selectedCourseId = null;
+  let activeTypeFilter = '';
+
+  window.addEventListener('DOMContentLoaded', loadCourses);
+
+  async function loadCourses() {
+    const { data, error } = await db.from('courses').select('*').eq('status','approved').order('created_at', { ascending: false });
+    if (error) {
+      document.getElementById('coursesContainer').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Could not load training listings. Please try again later.</p></div>`;
+      return;
+    }
+    allCourses = data || [];
+    renderCourses(allCourses);
+  }
+
+  function setTypeFilter(type, btn) {
+    activeTypeFilter = type;
+    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    filterCourses();
+  }
+
+  function renderCourses(courses) {
+    if (courses.length === 0) {
+      document.getElementById('coursesContainer').innerHTML = `<div class="empty-state"><div class="icon">📚</div><p>No training or courses available yet for this filter. Check back soon!</p><br><a href="course-submit.html" style="color:var(--blue);font-weight:700">Are you an instructor? Submit a training or course →</a></div>`;
+      return;
+    }
+    document.getElementById('coursesContainer').innerHTML = `<div class="courses-grid">${courses.map(c => {
+      const type = c.training_type || 'Online Course';
+      const topClass = type === 'Pre-Sea Training' ? 'top-presea' : type === 'Post-Sea Training' ? 'top-postsea' : 'top-online';
+      const typeIcon = type === 'Pre-Sea Training' ? '⚓' : type === 'Post-Sea Training' ? '🎓' : '💻';
+      const isInPerson = type !== 'Online Course';
+      const seatsLeft = c.seats_available;
+      const noSeatsLeft = isInPerson && seatsLeft !== null && seatsLeft <= 0;
+
+      return `
+      <div class="course-card">
+        <div class="course-card-top ${topClass}">
+          <span class="training-type-badge">${typeIcon} ${type}</span>
+          <div class="course-title">${escHtml(c.title)}</div>
+          <div class="course-instructor">👨‍🏫 ${escHtml(c.instructor_name)}</div>
+        </div>
+        <div class="course-card-body">
+          <div class="course-meta">
+            ${c.level ? `<span class="level-badge level-${c.level}">${c.level}</span>` : ''}
+            ${isInPerson && c.event_date ? `<span>📅 ${formatDate(c.event_date)}${c.event_end_date ? ' – '+formatDate(c.event_end_date) : ''}</span>` : ''}
+            ${isInPerson && c.location ? `<span>📍 ${escHtml(c.location)}</span>` : ''}
+            ${!isInPerson && c.duration ? `<span>⏱️ ${escHtml(c.duration)}</span>` : ''}
+            <span>💰 ${escHtml(c.price || 'Free')}</span>
+          </div>
+          <div class="course-desc">${escHtml(c.description || '')}</div>
+          ${isInPerson && seatsLeft !== null ? `<div class="seats-warning">${noSeatsLeft ? '⚠️ Fully booked' : `🪑 ${seatsLeft} seats available`}</div>` : ''}
+        </div>
+        <div class="course-card-footer">
+          <button class="enroll-btn" ${noSeatsLeft ? 'disabled' : ''} onclick="openEnrollModal(${c.id})">${noSeatsLeft ? 'Fully Booked' : 'Enroll Now'}</button>
+          ${c.external_link ? `<button class="view-link-btn" onclick="window.open('${escHtml(c.external_link)}','_blank')">🔗 View</button>` : ''}
+          ${c.pdf_url ? `<button class="view-link-btn" onclick="window.open('${escHtml(c.pdf_url)}','_blank')">📄 PDF</button>` : ''}
+        </div>
+      </div>
+    `;}).join('')}</div>`;
+  }
+
+  function filterCourses() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const level = document.getElementById('levelFilter').value;
+    const filtered = allCourses.filter(c => {
+      const matchSearch = !search || c.title.toLowerCase().includes(search) || c.instructor_name.toLowerCase().includes(search);
+      const matchCategory = !category || c.category === category;
+      const matchLevel = !level || c.level === level;
+      const matchType = !activeTypeFilter || (c.training_type || 'Online Course') === activeTypeFilter;
+      return matchSearch && matchCategory && matchLevel && matchType;
+    });
+    renderCourses(filtered);
+  }
+
+  function openEnrollModal(id) {
+    selectedCourseId = id;
+    const course = allCourses.find(c => c.id === id);
+    if (!course) return;
+    const type = course.training_type || 'Online Course';
+    const isInPerson = type !== 'Online Course';
+
+    document.getElementById('enrollModalTitle').textContent = `Enroll: ${course.title}`;
+    document.getElementById('enrollDetailBox').innerHTML = isInPerson ? `
+      <div style="background:var(--light-bg);border-radius:8px;padding:12px 16px;font-size:13px;color:#5a6a7a">
+        ${course.event_date ? `📅 ${formatDate(course.event_date)}${course.event_end_date ? ' – '+formatDate(course.event_end_date) : ''}<br>` : ''}
+        ${course.location ? `📍 ${escHtml(course.location)}` : ''}
+      </div>` : '';
+    document.getElementById('enrollError').classList.remove('show');
+    document.getElementById('enrollFormWrap').style.display = 'block';
+    document.getElementById('enrollSuccess').classList.remove('show');
+    ['enrollName','enrollEmail','enrollPhone','enrollRank','enrollMessage'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('enrollModal').classList.add('open');
+  }
+
+  function closeEnrollModal() {
+    document.getElementById('enrollModal').classList.remove('open');
+  }
+
+  async function submitEnrollment() {
+    const errEl = document.getElementById('enrollError');
+    errEl.classList.remove('show');
+    const name = document.getElementById('enrollName').value.trim();
+    const email = document.getElementById('enrollEmail').value.trim();
+    if (!name || !email) { errEl.textContent = 'Please enter your name and email.'; errEl.classList.add('show'); return; }
+
+    const { error } = await db.from('course_enrollments').insert([{
+      course_id: selectedCourseId,
+      full_name: name,
+      email,
+      phone: document.getElementById('enrollPhone').value.trim(),
+      current_rank: document.getElementById('enrollRank').value.trim(),
+      message: document.getElementById('enrollMessage').value.trim()
+    }]);
+
+    if (error) { errEl.textContent = 'Could not submit: ' + error.message; errEl.classList.add('show'); return; }
+    document.getElementById('enrollFormWrap').style.display = 'none';
+    document.getElementById('enrollSuccess').classList.add('show');
+  }
+
+  function escHtml(str) { const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
+  function formatDate(iso) { if(!iso) return ''; return new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+
+  document.getElementById('enrollModal').addEventListener('click', e => { if (e.target === document.getElementById('enrollModal')) closeEnrollModal(); });
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('navLinks').classList.toggle('open'));
+</script>
+</body>
+</html>

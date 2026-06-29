@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ECA Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --navy: #0a1628; --navy-mid: #112240; --blue: #1a4a8a;
+      --gold: #c8a84b; --gold-light: #e8c96b; --white: #f8f6f0;
+      --gray: #8a9ab5; --light-bg: #f4f1ea;
+      --green: #2a7a4a; --red: #c0392b; --orange: #d4820a;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Barlow', sans-serif;
+      --radius: 8px; --shadow: 0 4px 20px rgba(10,22,40,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: #eef0f5; color: var(--navy); min-height: 100vh; }
+
+    /* LOGIN SCREEN */
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); }
+    .login-box { background: white; border-radius: 16px; padding: 48px 40px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .login-logo { font-family: var(--font-display); font-size: 28px; font-weight: 900; color: var(--gold); margin-bottom: 6px; }
+    .login-subtitle { font-size: 14px; color: var(--gray); margin-bottom: 32px; }
+    .login-box input { width: 100%; padding: 13px 16px; border: 1.5px solid #d8dde6; border-radius: var(--radius); font-family: var(--font-body); font-size: 15px; margin-bottom: 16px; outline: none; }
+    .login-box input:focus { border-color: var(--blue); }
+    .login-btn { width: 100%; padding: 14px; background: var(--navy); color: var(--gold); border: none; border-radius: var(--radius); font-family: var(--font-body); font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 1px; }
+    .login-btn:hover { background: var(--blue); }
+    .login-error { color: var(--red); font-size: 13px; margin-bottom: 12px; display: none; }
+    .login-error.show { display: block; }
+
+    /* DASHBOARD */
+    .dashboard { display: none; }
+    .topbar { background: var(--navy); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topbar-logo { font-family: var(--font-display); font-size: 20px; font-weight: 900; color: var(--gold); }
+    .topbar-right { display: flex; align-items: center; gap: 20px; }
+    .admin-badge { font-size: 13px; color: rgba(248,246,240,0.7); }
+    .logout-btn { background: transparent; border: 1px solid rgba(200,168,75,0.4); color: var(--gold); padding: 7px 16px; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-family: var(--font-body); transition: 0.2s; }
+    .logout-btn:hover { background: rgba(200,168,75,0.1); }
+
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .page-title { font-family: var(--font-display); font-size: 28px; font-weight: 900; margin-bottom: 4px; }
+    .page-sub { color: var(--gray); font-size: 14px; margin-bottom: 28px; }
+
+    /* STATS CARDS */
+    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: white; border-radius: 12px; padding: 24px 20px; box-shadow: var(--shadow); border-left: 4px solid transparent; }
+    .stat-card.total { border-color: var(--blue); }
+    .stat-card.cadet { border-color: var(--gold); }
+    .stat-card.expert { border-color: #6a5acd; }
+    .stat-card.company { border-color: #2a9a6a; }
+    .stat-card.pending { border-color: var(--orange); }
+    .stat-num { font-family: var(--font-display); font-size: 36px; font-weight: 900; line-height: 1; }
+    .stat-card.total .stat-num { color: var(--blue); }
+    .stat-card.cadet .stat-num { color: var(--gold); }
+    .stat-card.expert .stat-num { color: #6a5acd; }
+    .stat-card.company .stat-num { color: #2a9a6a; }
+    .stat-card.pending .stat-num { color: var(--orange); }
+    .stat-label { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-top: 6px; }
+
+    /* CONTROLS */
+    .controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+    .search-box { flex: 1; min-width: 220px; padding: 10px 16px; border: 1.5px solid #d8dde6; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; outline: none; }
+    .search-box:focus { border-color: var(--blue); }
+    .filter-select { padding: 10px 14px; border: 1.5px solid #d8dde6; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; outline: none; background: white; cursor: pointer; }
+    .refresh-btn { padding: 10px 20px; background: var(--navy); color: var(--gold); border: none; border-radius: var(--radius); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 600; }
+    .refresh-btn:hover { background: var(--blue); }
+    .export-btn { padding: 10px 20px; background: var(--green); color: white; border: none; border-radius: var(--radius); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 600; }
+
+    /* TABLE */
+    .table-card { background: white; border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+    .table-header { padding: 20px 24px; border-bottom: 1px solid #e8ecf0; display: flex; justify-content: space-between; align-items: center; }
+    .table-header h3 { font-family: var(--font-display); font-size: 18px; }
+    .member-count-badge { background: var(--light-bg); border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 600; color: var(--navy); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    thead th { background: var(--navy); color: var(--gold); padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; }
+    tbody td { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; color: #3a4a5a; vertical-align: middle; }
+    tbody tr:hover td { background: #f8f9fc; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* BADGES */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+    .badge-cadet { background: #fff8e6; color: #a07820; }
+    .badge-expert { background: #f0eeff; color: #5040a0; }
+    .badge-company { background: #e6fff4; color: #1a7a4a; }
+    .badge-pending { background: #fff3e0; color: #b06010; }
+    .badge-approved { background: #e6fff4; color: #1a7a4a; }
+    .badge-rejected { background: #ffe6e6; color: #a02020; }
+    .badge-suspended { background: #f0f0f0; color: #606060; }
+
+    /* ACTION BUTTONS */
+    .action-btn { padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; font-family: var(--font-body); transition: 0.2s; }
+    .btn-approve { background: #e6fff4; color: var(--green); }
+    .btn-approve:hover { background: var(--green); color: white; }
+    .btn-reject { background: #ffe6e6; color: var(--red); }
+    .btn-reject:hover { background: var(--red); color: white; }
+    .btn-view { background: #e8eef8; color: var(--blue); }
+    .btn-view:hover { background: var(--blue); color: white; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--gray); }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state p { font-size: 15px; }
+
+    /* LOADING */
+    .loading { text-align: center; padding: 48px; color: var(--gray); font-size: 15px; }
+    .spinner { width: 32px; height: 32px; border: 3px solid #e0e4ec; border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(10,22,40,0.6); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-radius: 16px; padding: 36px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal-title { font-family: var(--font-display); font-size: 22px; font-weight: 900; margin-bottom: 20px; color: var(--navy); }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
+    .modal-field label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); }
+    .modal-field p { font-size: 15px; color: var(--navy); margin-top: 2px; }
+    .modal-close { float: right; background: var(--light-bg); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid #e8ecf0; }
+
+    /* NOTIFICATION TOAST */
+    .toast { position: fixed; bottom: 28px; right: 28px; background: var(--navy); color: white; padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 9999; transform: translateY(80px); opacity: 0; transition: 0.3s ease; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 4px solid var(--green); }
+    .toast.error { border-left: 4px solid var(--red); }
+
+    @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr 1fr; } .main { padding: 16px; } .modal-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- ===================== LOGIN SCREEN ===================== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">⚓ ECA Admin</div>
+    <div class="login-subtitle">Ethiopian Cadet Association — Admin Dashboard</div>
+    <div class="login-error" id="loginError">Invalid email or password. Try again.</div>
+    <input type="email" id="adminEmail" placeholder="Admin Email" />
+    <input type="password" id="adminPassword" placeholder="Password" />
+    <button class="login-btn" onclick="adminLogin()">Sign In to Dashboard</button>
+  </div>
+</div>
+
+<!-- ===================== DASHBOARD ===================== -->
+<div class="dashboard" id="dashboardScreen">
+
+  <div class="topbar">
+    <div class="topbar-logo">⚓ ECA Admin Dashboard</div>
+    <div class="topbar-right">
+      <span class="admin-badge" id="adminEmailDisplay"></span>
+      <button class="logout-btn" onclick="adminLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-title">ECA Admin Dashboard</div>
+    <div class="page-sub">Manage members and job listings</div>
+
+    <div class="top-tabs" style="display:flex;gap:8px;margin-bottom:24px;border-bottom:2px solid #e0e4ec">
+      <button class="top-tab active" id="topTabMembers" onclick="showSection('members')" style="padding:12px 24px;border:none;background:transparent;font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid var(--navy);color:var(--navy)">👥 Members</button>
+      <button class="top-tab" id="topTabJobs" onclick="showSection('jobs')" style="padding:12px 24px;border:none;background:transparent;font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;color:var(--gray)">💼 Jobs</button>
+      <button class="top-tab" id="topTabCourses" onclick="showSection('courses')" style="padding:12px 24px;border:none;background:transparent;font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;color:var(--gray)">📚 Courses</button>
+      <button class="top-tab" id="topTabMessages" onclick="showSection('messages')" style="padding:12px 24px;border:none;background:transparent;font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;color:var(--gray)">✉️ Messages</button>
+      <button class="top-tab" id="topTabNews" onclick="showSection('news')" style="padding:12px 24px;border:none;background:transparent;font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;color:var(--gray)">📰 News & Events</button>
+      <button class="top-tab" id="topTabNews" onclick="showSection('news')" style="padding:12px 24px;border:none;background:transparent;font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;color:var(--gray)">📰 News</button>
+      <button class="top-tab" id="topTabEvents" onclick="showSection('events')" style="padding:12px 24px;border:none;background:transparent;font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;color:var(--gray)">📅 Events</button>
+    </div>
+
+  <div id="sectionMembers">
+    <div class="page-title" style="font-size:22px">Member Registry</div>
+    <div class="page-sub" id="lastUpdated">Loading members...</div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card total"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total Members</div></div>
+      <div class="stat-card cadet"><div class="stat-num" id="statCadet">—</div><div class="stat-label">Cadets / Officers</div></div>
+      <div class="stat-card expert"><div class="stat-num" id="statExpert">—</div><div class="stat-label">Experts</div></div>
+      <div class="stat-card company"><div class="stat-num" id="statCompany">—</div><div class="stat-label">Companies</div></div>
+      <div class="stat-card pending"><div class="stat-num" id="statPending">—</div><div class="stat-label">Pending Approval</div></div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <input type="text" class="search-box" id="searchBox" placeholder="🔍  Search by name, email, username..." oninput="filterTable()"/>
+      <select class="filter-select" id="typeFilter" onchange="filterTable()">
+        <option value="">All Types</option>
+        <option value="cadet">Cadet / Officer</option>
+        <option value="expert">Expert</option>
+        <option value="company">Company</option>
+      </select>
+      <select class="filter-select" id="statusFilter" onchange="filterTable()">
+        <option value="">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <button class="refresh-btn" onclick="loadMembers()">↻ Refresh</button>
+      <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Registered Members</h3>
+        <span class="member-count-badge" id="visibleCount">0 members</span>
+      </div>
+      <div id="tableContainer">
+        <div class="loading"><div class="spinner"></div>Loading members...</div>
+      </div>
+    </div>
+  </div> <!-- /sectionMembers -->
+
+  <!-- ===================== JOBS SECTION ===================== -->
+  <div id="sectionJobs" style="display:none">
+    <div class="page-title" style="font-size:22px">Jobs &amp; Applications</div>
+    <div class="page-sub" id="jobsLastUpdated">Loading jobs...</div>
+
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card total"><div class="stat-num" id="statTotalJobs">—</div><div class="stat-label">Open Jobs</div></div>
+      <div class="stat-card pending"><div class="stat-num" id="statTotalApplications">—</div><div class="stat-label">Total Applications</div></div>
+      <div class="stat-card cadet"><div class="stat-num" id="statNewApplications">—</div><div class="stat-label">New Applications</div></div>
+    </div>
+
+    <div class="controls">
+      <button class="refresh-btn" onclick="loadJobsAndApplications()">↻ Refresh</button>
+      <button class="export-btn" onclick="openPostJobAdminModal()">+ Post New Job</button>
+    </div>
+
+    <!-- JOBS TABLE -->
+    <div class="table-card" style="margin-bottom:24px">
+      <div class="table-header">
+        <h3>Job Listings</h3>
+        <span class="member-count-badge" id="jobsCountBadge">0 jobs</span>
+      </div>
+      <div id="jobsTableContainer">
+        <div class="loading"><div class="spinner"></div>Loading jobs...</div>
+      </div>
+    </div>
+
+    <!-- APPLICATIONS TABLE -->
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Job Applications</h3>
+        <span class="member-count-badge" id="applicationsCountBadge">0 applications</span>
+      </div>
+      <div id="applicationsTableContainer">
+        <div class="loading"><div class="spinner"></div>Loading applications...</div>
+      </div>
+    </div>
+  </div> <!-- /sectionJobs -->
+
+  <!-- ===================== COURSES SECTION ===================== -->
+  <div id="sectionCourses" style="display:none">
+    <div class="page-title" style="font-size:22px">Course Management</div>
+    <div class="page-sub" id="coursesLastUpdated">Loading courses...</div>
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card pending"><div class="stat-num" id="statPendingCourses">—</div><div class="stat-label">Pending Review</div></div>
+      <div class="stat-card cadet"><div class="stat-num" id="statApprovedCourses">—</div><div class="stat-label">Approved Courses</div></div>
+      <div class="stat-card company"><div class="stat-num" id="statCourseEnrollments">—</div><div class="stat-label">Total Enrollments</div></div>
+    </div>
+    <div class="controls"><button class="refresh-btn" onclick="loadCourses()">↻ Refresh</button></div>
+    <div class="table-card" style="margin-bottom:24px">
+      <div class="table-header"><h3>Course Submissions</h3><span class="member-count-badge" id="coursesCountBadge">0 courses</span></div>
+      <div id="coursesTableContainer"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+    <div class="table-card">
+      <div class="table-header"><h3>Course Enrollments</h3><span class="member-count-badge" id="enrollmentsCountBadge">0 enrollments</span></div>
+      <div id="enrollmentsTableContainer"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== MESSAGES SECTION ===================== -->
+  <div id="sectionMessages" style="display:none">
+    <div class="page-title" style="font-size:22px">Contact Messages</div>
+    <div class="page-sub" id="messagesLastUpdated">Loading messages...</div>
+    <div class="stats-row" style="grid-template-columns:repeat(2,1fr)">
+      <div class="stat-card pending"><div class="stat-num" id="statNewMessages">—</div><div class="stat-label">New Messages</div></div>
+      <div class="stat-card total"><div class="stat-num" id="statTotalMessages">—</div><div class="stat-label">Total Messages</div></div>
+    </div>
+    <div class="controls"><button class="refresh-btn" onclick="loadMessages()">↻ Refresh</button></div>
+    <div class="table-card">
+      <div class="table-header"><h3>All Messages</h3><span class="member-count-badge" id="messagesCountBadge">0 messages</span></div>
+      <div id="messagesTableContainer"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== NEWS & EVENTS SECTION ===================== -->
+  <div id="sectionNews" style="display:none">
+    <div class="page-title" style="font-size:22px">News &amp; Events</div>
+    <div class="page-sub" id="newsLastUpdated">Loading...</div>
+    <div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-card pending"><div class="stat-num" id="statPendingNews">—</div><div class="stat-label">Pending</div></div>
+      <div class="stat-card total"><div class="stat-num" id="statApprovedNews">—</div><div class="stat-label">Published</div></div>
+      <div class="stat-card cadet"><div class="stat-num" id="statTotalNewsItems">—</div><div class="stat-label">News Articles</div></div>
+      <div class="stat-card company"><div class="stat-num" id="statTotalEvents">—</div><div class="stat-label">Events</div></div>
+    </div>
+    <div class="controls">
+      <button class="refresh-btn" onclick="loadNews()">↻ Refresh</button>
+      <button class="export-btn" onclick="openPostNewsModal()">+ Post News / Event</button>
+    </div>
+    <div class="table-card">
+      <div class="table-header"><h3>All Posts</h3><span class="member-count-badge" id="newsCountBadge">0 posts</span></div>
+      <div id="newsTableContainer"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+  </div>
+
+</div> <!-- /main -->
+</div> <!-- /dashboardScreen -->
+
+<!-- POST NEWS MODAL -->
+<div class="modal-overlay" id="postNewsModal">
+  <div class="modal" style="max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closePostNewsModal()">✕</button>
+    <div class="modal-title" style="margin-bottom:18px" id="postNewsModalTitle">Post News or Event</div>
+    <div id="postNewsError" style="display:none;margin-bottom:14px;background:#fff0f0;border:1px solid #ffb3b3;color:#c0392b;padding:12px;border-radius:8px;font-size:14px"></div>
+    <div class="modal-grid" style="grid-template-columns:1fr 1fr">
+      <div class="modal-field"><label>Type *</label>
+        <select id="anType" onchange="toggleAdminEventFields()" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px;font-family:inherit">
+          <option value="news">📰 News Article</option>
+          <option value="event">📅 Event</option>
+        </select>
+      </div>
+      <div class="modal-field"><label>Author Name</label><input type="text" id="anAuthor" placeholder="ECA Team" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Title *</label><input type="text" id="anTitle" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Short Summary (shown on card) *</label><input type="text" id="anExcerpt" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Full Content *</label><textarea id="anContent" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px;min-height:120px;font-family:inherit;resize:vertical"></textarea></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Video Link (YouTube / Vimeo — Optional)</label><input type="url" id="anVideo" placeholder="https://youtube.com/..." style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Image URL (Optional — paste direct link)</label><input type="url" id="anImageUrl" placeholder="https://..." style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div id="adminEventFields" style="display:none;grid-column:1/-1">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div class="modal-field"><label>Event Start Date *</label><input type="date" id="anEventDate" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+          <div class="modal-field"><label>Event End Date</label><input type="date" id="anEventEndDate" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+        </div>
+        <div class="modal-field" style="margin-bottom:12px"><label>Location</label><input type="text" id="anEventLocation" placeholder="e.g. Addis Ababa / Online" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+        <div class="modal-field"><label>Registration / Event Link</label><input type="url" id="anEventLink" placeholder="https://..." style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="action-btn btn-approve" style="padding:12px 28px;font-size:15px" onclick="submitAdminNews()">Publish Now ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEMBER DETAIL MODAL -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title" id="modalName">Member Details</div>
+    <div class="modal-grid" id="modalContent"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<!-- POST JOB MODAL (ADMIN) -->
+<div class="modal-overlay" id="postJobAdminModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closePostJobAdminModal()">✕</button>
+    <div class="modal-title" style="margin-bottom:18px">Post a New Job Listing</div>
+    <div class="login-error" id="postJobAdminError" style="display:none;margin-bottom:14px"></div>
+    <div class="modal-grid" style="grid-template-columns:1fr 1fr">
+      <div class="modal-field" style="grid-column:1/-1"><label>Job Title *</label><input type="text" id="ajTitle" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div class="modal-field"><label>Company Name *</label><input type="text" id="ajCompany" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div class="modal-field"><label>Location</label><input type="text" id="ajLocation" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div class="modal-field"><label>Job Type</label>
+        <select id="ajType" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px">
+          <option value="Between-Contract">Between-Contract</option>
+          <option value="Full-Time">Full-Time</option>
+          <option value="Contract">Contract</option>
+          <option value="Internship">Internship</option>
+        </select>
+      </div>
+      <div class="modal-field"><label>Category</label>
+        <select id="ajCategory" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px">
+          <option value="Deck">Deck</option>
+          <option value="Engine">Engine</option>
+          <option value="Shore-Based">Shore-Based</option>
+          <option value="Admin">Admin / Office</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Salary Range</label><input type="text" id="ajSalary" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Description *</label><textarea id="ajDescription" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px;min-height:80px;font-family:inherit"></textarea></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Requirements</label><textarea id="ajRequirements" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px;min-height:80px;font-family:inherit"></textarea></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Contact Email *</label><input type="email" id="ajContactEmail" style="width:100%;padding:10px;border:1.5px solid #d8dde6;border-radius:8px;margin-top:4px"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="action-btn btn-approve" style="padding:10px 24px" onclick="submitAdminJob()">Post Job ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast"></div>
+
+
+
+<script>
+  // ============================================================
+  // ✅ PASTE YOUR SUPABASE CREDENTIALS HERE (same as register.html)
+  // ============================================================
+  const SUPABASE_URL = 'https://plxsxxdkumpuehzpemco.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBseHN4eGRrdW1wdWVoenBlbWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg4NzAsImV4cCI6MjA5NjMzNDg3MH0.azZ6388Ry7v2DXx-OmhXsJtmj6-Yk5PmgDy8nIzTtY4';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let allMembers = [];
+  let currentMember = null;
+  let allJobs = [];
+  let allApplications = [];
+
+  let allCourses = [], allEnrollments = [], allMessages = [];
+
+  function showSection(section) {
+    const sections = ['Members','Jobs','Courses','Messages'];
+    sections.forEach(s => {
+      const el = document.getElementById('section'+s);
+      const tab = document.getElementById('topTab'+s);
+      if(el) el.style.display = 'none';
+      if(tab){ tab.style.borderBottomColor='transparent'; tab.style.color='var(--gray)'; }
+    });
+    const active = document.getElementById('section'+section.charAt(0).toUpperCase()+section.slice(1));
+    const activeTab = document.getElementById('topTab'+section.charAt(0).toUpperCase()+section.slice(1));
+    if(active) active.style.display = 'block';
+    if(activeTab){ activeTab.style.borderBottomColor='var(--navy)'; activeTab.style.color='var(--navy)'; }
+    if(section==='jobs') loadJobsAndApplications();
+    if(section==='courses') loadCourses();
+    if(section==='messages') loadMessages();
+  }
+
+  // ---- LOGIN ----
+  async function adminLogin() {
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    const errEl = document.getElementById('loginError');
+    errEl.classList.remove('show');
+
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) {
+      errEl.classList.add('show');
+      return;
+    }
+    document.getElementById('adminEmailDisplay').textContent = email;
+    showDashboard();
+    loadMembers();
+  }
+
+  async function adminLogout() {
+    await db.auth.signOut();
+    document.getElementById('dashboardScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    allMembers = [];
+  }
+
+  function showDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboardScreen').style.display = 'block';
+  }
+
+  // Check if already logged in
+  db.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      document.getElementById('adminEmailDisplay').textContent = session.user.email;
+      showDashboard();
+      loadMembers();
+    }
+  });
+
+  // ---- LOAD MEMBERS ----
+  async function loadMembers() {
+    document.getElementById('tableContainer').innerHTML = '<div class="loading"><div class="spinner"></div>Loading members...</div>';
+    document.getElementById('lastUpdated').textContent = 'Loading...';
+
+    const { data, error } = await db
+      .from('members')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      document.getElementById('tableContainer').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not load members. Make sure your Supabase credentials are correct and the admin policy is set up.</p></div>';
+      return;
+    }
+
+    allMembers = data || [];
+    updateStats();
+    renderTable(allMembers);
+    document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()} — ${allMembers.length} total members registered`;
+  }
+
+  function updateStats() {
+    document.getElementById('statTotal').textContent = allMembers.length;
+    document.getElementById('statCadet').textContent = allMembers.filter(m => m.member_type === 'cadet').length;
+    document.getElementById('statExpert').textContent = allMembers.filter(m => m.member_type === 'expert').length;
+    document.getElementById('statCompany').textContent = allMembers.filter(m => m.member_type === 'company').length;
+    document.getElementById('statPending').textContent = allMembers.filter(m => m.status === 'pending').length;
+  }
+
+  function renderTable(members) {
+    document.getElementById('visibleCount').textContent = `${members.length} member${members.length !== 1 ? 's' : ''}`;
+
+    if (members.length === 0) {
+      document.getElementById('tableContainer').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No members found matching your filters.</p></div>';
+      return;
+    }
+
+    const rows = members.map(m => `
+      <tr>
+        <td><strong>${m.first_name} ${m.last_name}</strong><br><span style="color:var(--gray);font-size:12px">@${m.username || '—'}</span></td>
+        <td>${m.email}</td>
+        <td><span class="badge badge-${m.member_type}">${m.member_type}</span></td>
+        <td>${m.rank || '—'}</td>
+        <td>${m.city || '—'}</td>
+        <td><span class="badge badge-${m.status}">${m.status}</span></td>
+        <td>${formatDate(m.created_at)}</td>
+        <td style="white-space:nowrap">
+          <button class="action-btn btn-view" onclick="viewMember(${m.id})">View</button>
+          ${m.status === 'pending' ? `
+            <button class="action-btn btn-approve" onclick="updateStatus(${m.id},'approved')">Approve</button>
+            <button class="action-btn btn-reject" onclick="updateStatus(${m.id},'rejected')">Reject</button>
+          ` : ''}
+        </td>
+      </tr>
+    `).join('');
+
+    document.getElementById('tableContainer').innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Email</th><th>Type</th><th>Rank</th>
+              <th>City</th><th>Status</th><th>Registered</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function filterTable() {
+    const search = document.getElementById('searchBox').value.toLowerCase();
+    const type = document.getElementById('typeFilter').value;
+    const status = document.getElementById('statusFilter').value;
+
+    const filtered = allMembers.filter(m => {
+      const matchSearch = !search ||
+        (m.first_name + ' ' + m.last_name).toLowerCase().includes(search) ||
+        m.email.toLowerCase().includes(search) ||
+        (m.username || '').toLowerCase().includes(search);
+      const matchType = !type || m.member_type === type;
+      const matchStatus = !status || m.status === status;
+      return matchSearch && matchType && matchStatus;
+    });
+
+    renderTable(filtered);
+  }
+
+  // ---- VIEW MEMBER DETAIL ----
+  function viewMember(id) {
+    currentMember = allMembers.find(m => m.id === id);
+    if (!currentMember) return;
+    const m = currentMember;
+
+    document.getElementById('modalName').textContent = `${m.first_name} ${m.last_name}`;
+
+    const sharedFields = `
+      <div class="modal-field"><label>Member Type</label><p>${m.member_type}</p></div>
+      <div class="modal-field"><label>Status</label><p><span class="badge badge-${m.status}">${m.status}</span></p></div>
+      <div class="modal-field"><label>Email</label><p>${m.email}</p></div>
+      <div class="modal-field"><label>Phone</label><p>${m.phone || '—'}</p></div>
+      <div class="modal-field"><label>Username</label><p>@${m.username || '—'}</p></div>
+      <div class="modal-field"><label>Nationality</label><p>${m.nationality || '—'}</p></div>
+      <div class="modal-field"><label>City</label><p>${m.city || '—'}</p></div>
+      <div class="modal-field"><label>Date of Birth</label><p>${m.date_of_birth || '—'}</p></div>
+    `;
+
+    let typeFields = '';
+    if (m.member_type === 'cadet') {
+      typeFields = `
+        <div class="modal-field"><label>Rank / Position</label><p>${m.rank || '—'}</p></div>
+        <div class="modal-field"><label>Years at Sea</label><p>${m.sea_years ?? '—'}</p></div>
+        <div class="modal-field"><label>Vessel Type</label><p>${m.vessel_type || '—'}</p></div>
+        <div class="modal-field"><label>Current Status</label><p>${m.current_status || '—'}</p></div>
+        <div class="modal-field"><label>Certificate</label><p>${m.certificate || '—'}</p></div>
+        <div class="modal-field" style="grid-column:1/-1"><label>Motivation / Notes</label><p>${m.motivation || '—'}</p></div>
+      `;
+    } else if (m.member_type === 'expert') {
+      typeFields = `
+        <div class="modal-field"><label>Area of Expertise</label><p>${m.expertise_area || '—'}</p></div>
+        <div class="modal-field"><label>Years of Experience</label><p>${m.years_experience ?? '—'}</p></div>
+        <div class="modal-field"><label>Certificate / Qualification</label><p>${m.certificate || '—'}</p></div>
+        <div class="modal-field" style="grid-column:1/-1"><label>Bio</label><p>${m.bio || '—'}</p></div>
+      `;
+    } else if (m.member_type === 'company') {
+      typeFields = `
+        <div class="modal-field"><label>Company Name</label><p>${m.company_name || '—'}</p></div>
+        <div class="modal-field"><label>Company Type</label><p>${m.company_type || '—'}</p></div>
+        <div class="modal-field"><label>Contact Person</label><p>${m.contact_person_name || '—'}</p></div>
+        <div class="modal-field"><label>Contact Position</label><p>${m.contact_position || '—'}</p></div>
+        <div class="modal-field" style="grid-column:1/-1"><label>Office Address</label><p>${m.office_address || '—'}</p></div>
+        <div class="modal-field" style="grid-column:1/-1"><label>Website</label><p>${m.company_website ? `<a href="${m.company_website}" target="_blank" style="color:var(--blue)">${m.company_website}</a>` : '—'}</p></div>
+      `;
+    }
+
+    document.getElementById('modalContent').innerHTML = sharedFields + typeFields + `
+      <div class="modal-field"><label>Newsletter</label><p>${m.newsletter_opt_in ? 'Yes ✓' : 'No'}</p></div>
+      <div class="modal-field"><label>Registered On</label><p>${formatDate(m.created_at)}</p></div>
+    `;
+
+    document.getElementById('modalActions').innerHTML = `
+      ${m.status !== 'approved' ? `<button class="action-btn btn-approve" style="padding:10px 20px" onclick="updateStatus(${m.id},'approved');closeModal()">✓ Approve Member</button>` : ''}
+      ${m.status !== 'rejected' ? `<button class="action-btn btn-reject" style="padding:10px 20px" onclick="updateStatus(${m.id},'rejected');closeModal()">✕ Reject Member</button>` : ''}
+      ${m.status !== 'suspended' ? `<button class="action-btn" style="padding:10px 20px;background:#f0f0f0;color:#606060" onclick="updateStatus(${m.id},'suspended');closeModal()">⊘ Suspend</button>` : ''}
+    `;
+
+    document.getElementById('memberModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('memberModal').classList.remove('open');
+  }
+
+  // ---- UPDATE STATUS ----
+  async function updateStatus(id, newStatus) {
+    const { error } = await db.from('members').update({ status: newStatus }).eq('id', id);
+    if (error) {
+      showToast('Error: ' + error.message, 'error');
+      return;
+    }
+    const idx = allMembers.findIndex(m => m.id === id);
+    if (idx !== -1) allMembers[idx].status = newStatus;
+    updateStats();
+    filterTable();
+    showToast(`Member ${newStatus} successfully ✓`, 'success');
+  }
+
+  // ---- EXPORT CSV ----
+  function exportCSV() {
+    const headers = ['ID','Type','First Name','Last Name','Email','Phone','Username','Nationality','City','Rank','Sea Years','Vessel Type','Current Status','Certificate','Status','Registered'];
+    const rows = allMembers.map(m => [
+      m.id, m.member_type, m.first_name, m.last_name, m.email, m.phone || '',
+      m.username || '', m.nationality || '', m.city || '', m.rank || '',
+      m.sea_years || 0, m.vessel_type || '', m.current_status || '',
+      m.certificate || '', m.status, formatDate(m.created_at)
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = `ECA_Members_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    showToast('CSV exported successfully ✓', 'success');
+  }
+
+  // ---- HELPERS ----
+  function formatDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Close modal on overlay click
+  document.getElementById('memberModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ============================================================
+  // JOBS & APPLICATIONS MANAGEMENT
+  // ============================================================
+
+  async function loadJobsAndApplications() {
+    document.getElementById('jobsTableContainer').innerHTML = '<div class="loading"><div class="spinner"></div>Loading jobs...</div>';
+    document.getElementById('applicationsTableContainer').innerHTML = '<div class="loading"><div class="spinner"></div>Loading applications...</div>';
+    document.getElementById('jobsLastUpdated').textContent = 'Loading...';
+
+    const { data: jobs, error: jobsError } = await db.from('jobs').select('*').order('created_at', { ascending: false });
+    const { data: apps, error: appsError } = await db.from('job_applications').select('*').order('created_at', { ascending: false });
+
+    if (jobsError) {
+      document.getElementById('jobsTableContainer').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not load jobs: ${jobsError.message}</p></div>`;
+    }
+    if (appsError) {
+      document.getElementById('applicationsTableContainer').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not load applications: ${appsError.message}</p></div>`;
+    }
+
+    allJobs = jobs || [];
+    allApplications = apps || [];
+
+    updateJobStats();
+    renderJobsTable();
+    renderApplicationsTable();
+
+    document.getElementById('jobsLastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+  }
+
+  function updateJobStats() {
+    document.getElementById('statTotalJobs').textContent = allJobs.filter(j => j.status === 'open').length;
+    document.getElementById('statTotalApplications').textContent = allApplications.length;
+    document.getElementById('statNewApplications').textContent = allApplications.filter(a => a.status === 'new').length;
+  }
+
+  function renderJobsTable() {
+    document.getElementById('jobsCountBadge').textContent = `${allJobs.length} job${allJobs.length !== 1 ? 's' : ''}`;
+
+    if (allJobs.length === 0) {
+      document.getElementById('jobsTableContainer').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No jobs posted yet. Click "Post New Job" to add one.</p></div>';
+      return;
+    }
+
+    const rows = allJobs.map(j => {
+      const appCount = allApplications.filter(a => a.job_id === j.id).length;
+      return `
+      <tr>
+        <td><strong>${escapeHtml(j.title)}</strong></td>
+        <td>${escapeHtml(j.company_name)}</td>
+        <td><span class="badge" style="background:#e6eeff;color:var(--blue)">${j.job_type}</span></td>
+        <td>${escapeHtml(j.location || '—')}</td>
+        <td><span class="badge badge-${j.status === 'open' ? 'approved' : 'rejected'}">${j.status}</span></td>
+        <td>${appCount}</td>
+        <td>${formatDate(j.created_at)}</td>
+        <td style="white-space:nowrap">
+          ${j.status === 'open'
+            ? `<button class="action-btn btn-reject" onclick="toggleJobStatus(${j.id},'closed')">Close</button>`
+            : `<button class="action-btn btn-approve" onclick="toggleJobStatus(${j.id},'open')">Reopen</button>`}
+          <button class="action-btn" style="background:#ffe6e6;color:var(--red)" onclick="deleteJob(${j.id})">Delete</button>
+        </td>
+      </tr>
+    `;
+    }).join('');
+
+    document.getElementById('jobsTableContainer').innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Title</th><th>Company</th><th>Type</th><th>Location</th><th>Status</th><th>Applications</th><th>Posted</th><th>Actions</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function renderApplicationsTable() {
+    document.getElementById('applicationsCountBadge').textContent = `${allApplications.length} application${allApplications.length !== 1 ? 's' : ''}`;
+
+    if (allApplications.length === 0) {
+      document.getElementById('applicationsTableContainer').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No applications received yet.</p></div>';
+      return;
+    }
+
+    const rows = allApplications.map(a => {
+      const job = allJobs.find(j => j.id === a.job_id);
+      return `
+      <tr>
+        <td><strong>${escapeHtml(a.applicant_name)}</strong><br><span style="color:var(--gray);font-size:12px">${escapeHtml(a.applicant_email)}</span></td>
+        <td>${job ? escapeHtml(job.title) : '—'}</td>
+        <td>${escapeHtml(a.rank || '—')}</td>
+        <td>${escapeHtml(a.applicant_phone || '—')}</td>
+        <td><span class="badge badge-${a.status === 'new' ? 'pending' : 'approved'}">${a.status}</span></td>
+        <td>${formatDate(a.created_at)}</td>
+        <td style="white-space:nowrap">
+          <button class="action-btn btn-view" onclick="viewApplication(${a.id})">View</button>
+          ${a.status === 'new' ? `<button class="action-btn btn-approve" onclick="updateAppStatus(${a.id},'reviewed')">Mark Reviewed</button>` : ''}
+        </td>
+      </tr>
+    `;
+    }).join('');
+
+    document.getElementById('applicationsTableContainer').innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Applicant</th><th>Job</th><th>Rank</th><th>Phone</th><th>Status</th><th>Applied</th><th>Actions</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function viewApplication(id) {
+    const a = allApplications.find(x => x.id === id);
+    if (!a) return;
+    const job = allJobs.find(j => j.id === a.job_id);
+
+    document.getElementById('modalName').textContent = a.applicant_name;
+    document.getElementById('modalContent').innerHTML = `
+      <div class="modal-field"><label>Applied For</label><p>${job ? escapeHtml(job.title) + ' — ' + escapeHtml(job.company_name) : '—'}</p></div>
+      <div class="modal-field"><label>Status</label><p><span class="badge badge-${a.status === 'new' ? 'pending' : 'approved'}">${a.status}</span></p></div>
+      <div class="modal-field"><label>Email</label><p>${escapeHtml(a.applicant_email)}</p></div>
+      <div class="modal-field"><label>Phone</label><p>${escapeHtml(a.applicant_phone || '—')}</p></div>
+      <div class="modal-field"><label>Rank</label><p>${escapeHtml(a.rank || '—')}</p></div>
+      <div class="modal-field"><label>Applied On</label><p>${formatDate(a.created_at)}</p></div>
+      <div class="modal-field" style="grid-column:1/-1"><label>Message / Cover Note</label><p>${escapeHtml(a.message || '—')}</p></div>
+    `;
+    document.getElementById('modalActions').innerHTML = `
+      ${a.status !== 'reviewed' ? `<button class="action-btn btn-approve" style="padding:10px 20px" onclick="updateAppStatus(${a.id},'reviewed');closeModal()">✓ Mark Reviewed</button>` : ''}
+      ${a.status !== 'contacted' ? `<button class="action-btn btn-view" style="padding:10px 20px" onclick="updateAppStatus(${a.id},'contacted');closeModal()">📞 Mark Contacted</button>` : ''}
+    `;
+    document.getElementById('memberModal').classList.add('open');
+  }
+
+  async function updateAppStatus(id, status) {
+    const { error } = await db.from('job_applications').update({ status }).eq('id', id);
+    if (error) { showToast('Error: ' + error.message, 'error'); return; }
+    const idx = allApplications.findIndex(a => a.id === id);
+    if (idx !== -1) allApplications[idx].status = status;
+    updateJobStats();
+    renderApplicationsTable();
+    showToast('Application updated ✓', 'success');
+  }
+
+  async function toggleJobStatus(id, status) {
+    const { error } = await db.from('jobs').update({ status }).eq('id', id);
+    if (error) { showToast('Error: ' + error.message, 'error'); return; }
+    const idx = allJobs.findIndex(j => j.id === id);
+    if (idx !== -1) allJobs[idx].status = status;
+    updateJobStats();
+    renderJobsTable();
+    showToast(`Job marked as ${status} ✓`, 'success');
+  }
+
+  async function deleteJob(id) {
+    if (!confirm('Delete this job listing permanently? This cannot be undone.')) return;
+    const { error } = await db.from('jobs').delete().eq('id', id);
+    if (error) { showToast('Error: ' + error.message, 'error'); return; }
+    allJobs = allJobs.filter(j => j.id !== id);
+    updateJobStats();
+    renderJobsTable();
+    showToast('Job deleted ✓', 'success');
+  }
+
+  // ---- POST JOB (ADMIN MODAL) ----
+  function openPostJobAdminModal() {
+    document.getElementById('postJobAdminError').style.display = 'none';
+    ['ajTitle','ajCompany','ajLocation','ajSalary','ajDescription','ajRequirements','ajContactEmail'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('postJobAdminModal').classList.add('open');
+  }
+
+  function closePostJobAdminModal() {
+    document.getElementById('postJobAdminModal').classList.remove('open');
+  }
+
+  async function submitAdminJob() {
+    const errEl = document.getElementById('postJobAdminError');
+    errEl.style.display = 'none';
+
+    const title = document.getElementById('ajTitle').value.trim();
+    const company = document.getElementById('ajCompany').value.trim();
+    const description = document.getElementById('ajDescription').value.trim();
+    const contactEmail = document.getElementById('ajContactEmail').value.trim();
+
+    if (!title || !company || !description || !contactEmail) {
+      errEl.textContent = 'Please fill in all required fields (marked *).';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    const { error } = await db.from('jobs').insert([{
+      title, company_name: company,
+      location: document.getElementById('ajLocation').value.trim(),
+      job_type: document.getElementById('ajType').value,
+      category: document.getElementById('ajCategory').value,
+      salary_range: document.getElementById('ajSalary').value.trim(),
+      description,
+      requirements: document.getElementById('ajRequirements').value.trim(),
+      contact_email: contactEmail,
+      status: 'open'
+    }]);
+
+    if (error) { errEl.textContent = 'Error: ' + error.message; errEl.style.display = 'block'; return; }
+
+    closePostJobAdminModal();
+    showToast('Job posted successfully ✓', 'success');
+    loadJobsAndApplications();
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  // Close post job modal on overlay click
+  document.getElementById('postJobAdminModal').addEventListener('click', function(e) {
+    if (e.target === this) closePostJobAdminModal();
+  });
+
+  // ============================================================
+  // COURSES MANAGEMENT
+  // ============================================================
+  async function loadCourses() {
+    document.getElementById('coursesTableContainer').innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+    document.getElementById('enrollmentsTableContainer').innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+    const { data: courses } = await db.from('courses').select('*').order('created_at',{ascending:false});
+    const { data: enrollments } = await db.from('course_enrollments').select('*').order('created_at',{ascending:false});
+    allCourses = courses || [];
+    allEnrollments = enrollments || [];
+    document.getElementById('statPendingCourses').textContent = allCourses.filter(c=>c.status==='pending').length;
+    document.getElementById('statApprovedCourses').textContent = allCourses.filter(c=>c.status==='approved').length;
+    document.getElementById('statCourseEnrollments').textContent = allEnrollments.length;
+    document.getElementById('coursesCountBadge').textContent = `${allCourses.length} courses`;
+    document.getElementById('enrollmentsCountBadge').textContent = `${allEnrollments.length} enrollments`;
+    document.getElementById('coursesLastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+    if(allCourses.length===0){
+      document.getElementById('coursesTableContainer').innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><p>No courses submitted yet.</p></div>';
+    } else {
+      document.getElementById('coursesTableContainer').innerHTML=`<div class="table-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Instructor</th><th>Date/Location</th><th>Status</th><th>Submitted</th><th>Actions</th></tr></thead><tbody>${allCourses.map(c=>{
+        const type = c.training_type || 'Online Course';
+        const isInPerson = (type === 'Pre-Sea Training' || type === 'Post-Sea Training');
+        const typeColors = {'Pre-Sea Training':'#e6eeff;color:#1a4a8a','Post-Sea Training':'#f0eeff;color:#5040a0','Online Course':'#fff8e6;color:#a07820'};
+        return `<tr><td><strong>${escapeHtml(c.title)}</strong>${c.pdf_url?` <a href="${c.pdf_url}" target="_blank" style="color:var(--blue);font-size:11px">📄 PDF</a>`:''}</td><td><span class="badge" style="background:${typeColors[type]}">${type}</span></td><td>${escapeHtml(c.instructor_name)}<br><span style="font-size:11px;color:var(--gray)">${escapeHtml(c.instructor_email)}</span></td><td>${isInPerson?`${c.event_date?formatDate(c.event_date):'—'}<br><span style="font-size:11px;color:var(--gray)">${escapeHtml(c.location||'—')}${c.seats_available?' · '+c.seats_available+' seats':''}</span>`:(c.duration?escapeHtml(c.duration):'—')}</td><td><span class="badge badge-${c.status==='approved'?'approved':c.status==='rejected'?'rejected':'pending'}">${c.status}</span></td><td>${formatDate(c.created_at)}</td><td style="white-space:nowrap">${c.status!=='approved'?`<button class="action-btn btn-approve" onclick="updateCourseStatus(${c.id},'approved')">Approve</button>`:''}${c.status!=='rejected'?`<button class="action-btn btn-reject" onclick="updateCourseStatus(${c.id},'rejected')">Reject</button>`:''}<button class="action-btn" style="background:#ffe6e6;color:var(--red)" onclick="deleteCourse(${c.id})">Delete</button></td></tr>`;
+      }).join('')}</tbody></table></div>`;
+    }
+    if(allEnrollments.length===0){
+      document.getElementById('enrollmentsTableContainer').innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><p>No enrollments yet.</p></div>';
+    } else {
+      document.getElementById('enrollmentsTableContainer').innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Course</th><th>Email</th><th>Rank</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>${allEnrollments.map(e=>{const course=allCourses.find(c=>c.id===e.course_id);return`<tr><td><strong>${escapeHtml(e.full_name)}</strong></td><td>${course?escapeHtml(course.title):'—'}</td><td>${escapeHtml(e.email)}</td><td>${escapeHtml(e.current_rank||'—')}</td><td><span class="badge badge-${e.status==='new'?'pending':'approved'}">${e.status}</span></td><td>${formatDate(e.created_at)}</td><td>${e.status==='new'?`<button class="action-btn btn-approve" onclick="updateEnrollmentStatus(${e.id},'contacted')">Mark Contacted</button>`:''}</td></tr>`;}).join('')}</tbody></table></div>`;
+    }
+  }
+
+  async function updateCourseStatus(id, status) {
+    await db.from('courses').update({status}).eq('id',id);
+    loadCourses();
+    showToast(`Course ${status} ✓`,'success');
+  }
+
+  async function deleteCourse(id) {
+    if(!confirm('Delete this course permanently?')) return;
+    await db.from('courses').delete().eq('id',id);
+    loadCourses();
+    showToast('Course deleted ✓','success');
+  }
+
+  async function updateEnrollmentStatus(id, status) {
+    await db.from('course_enrollments').update({status}).eq('id',id);
+    loadCourses();
+    showToast('Enrollment updated ✓','success');
+  }
+
+  // ============================================================
+  // MESSAGES MANAGEMENT
+  // ============================================================
+  async function loadMessages() {
+    document.getElementById('messagesTableContainer').innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';
+    const { data, error } = await db.from('contact_messages').select('*').order('created_at',{ascending:false});
+    if(error){document.getElementById('messagesTableContainer').innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><p>${error.message}</p></div>`;return;}
+    allMessages=data||[];
+    document.getElementById('statNewMessages').textContent=allMessages.filter(m=>m.status==='new').length;
+    document.getElementById('statTotalMessages').textContent=allMessages.length;
+    document.getElementById('messagesCountBadge').textContent=`${allMessages.length} messages`;
+    document.getElementById('messagesLastUpdated').textContent=`Last updated: ${new Date().toLocaleTimeString()}`;
+    if(allMessages.length===0){document.getElementById('messagesTableContainer').innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><p>No messages yet.</p></div>';return;}
+    document.getElementById('messagesTableContainer').innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>${allMessages.map(m=>`<tr><td><strong>${escapeHtml(m.first_name)} ${escapeHtml(m.last_name)}</strong></td><td>${escapeHtml(m.email)}</td><td>${escapeHtml(m.subject)}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(m.message)}</td><td><span class="badge badge-${m.status==='new'?'pending':'approved'}">${m.status}</span></td><td>${formatDate(m.created_at)}</td><td style="white-space:nowrap">${m.status==='new'?`<button class="action-btn btn-view" onclick="markMessageRead(${m.id})">Mark Read</button>`:''}<button class="action-btn" style="background:#e6eeff;color:var(--blue)" onclick="replyMessage('${escapeHtml(m.email)}','${escapeHtml(m.subject)}')">Reply</button></td></tr>`).join('')}</tbody></table></div>`;
+  }
+
+  async function markMessageRead(id) {
+    await db.from('contact_messages').update({status:'read'}).eq('id',id);
+    loadMessages();
+    showToast('Marked as read ✓','success');
+  }
+
+  function replyMessage(email, subject) {
+    window.location.href = `mailto:${email}?subject=Re: ${subject}`;
+  }
+
+  // ============================================================
+  // NEWS & EVENTS MANAGEMENT
+  // ============================================================
+  let allNews = [];
+
+  async function loadNews() {
+    document.getElementById('newsTableContainer').innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+    const { data, error } = await db.from('news_events').select('*').order('created_at', { ascending: false });
+    if (error) { document.getElementById('newsTableContainer').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>${error.message}</p></div>`; return; }
+    allNews = data || [];
+    document.getElementById('statPendingNews').textContent = allNews.filter(n => n.status === 'pending').length;
+    document.getElementById('statApprovedNews').textContent = allNews.filter(n => n.status === 'approved').length;
+    document.getElementById('statTotalNewsItems').textContent = allNews.filter(n => n.type === 'news').length;
+    document.getElementById('statTotalEvents').textContent = allNews.filter(n => n.type === 'event').length;
+    document.getElementById('newsCountBadge').textContent = `${allNews.length} post${allNews.length !== 1 ? 's' : ''}`;
+    document.getElementById('newsLastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+    if (allNews.length === 0) {
+      document.getElementById('newsTableContainer').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No news or events yet. Click "+ Post News / Event" to add one.</p></div>';
+      return;
+    }
+    document.getElementById('newsTableContainer').innerHTML = `
+      <div class="table-wrap"><table>
+        <thead><tr><th>Type</th><th>Title</th><th>Author</th><th>Event Date</th><th>Status</th><th>Submitted</th><th>Actions</th></tr></thead>
+        <tbody>${allNews.map(n => `
+          <tr>
+            <td><span class="badge" style="background:${n.type==='event'?'#fff8e6':'#e6eeff'};color:${n.type==='event'?'#a07820':'#1a4a8a'}">${n.type==='event'?'📅 Event':'📰 News'}</span></td>
+            <td><strong>${escapeHtml(n.title)}</strong></td>
+            <td>${escapeHtml(n.author_name||'ECA Team')}</td>
+            <td>${n.event_date ? formatDate(n.event_date) : '—'}</td>
+            <td><span class="badge badge-${n.status==='approved'?'approved':n.status==='rejected'?'rejected':'pending'}">${n.status}</span></td>
+            <td>${formatDate(n.created_at)}</td>
+            <td style="white-space:nowrap">
+              ${n.status!=='approved'?`<button class="action-btn btn-approve" onclick="updateNewsStatus(${n.id},'approved')">Approve</button>`:''}
+              ${n.status!=='rejected'?`<button class="action-btn btn-reject" onclick="updateNewsStatus(${n.id},'rejected')">Reject</button>`:''}
+              <button class="action-btn" style="background:#ffe6e6;color:var(--red)" onclick="deleteNews(${n.id})">Delete</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>`;
+  }
+
+  async function updateNewsStatus(id, status) {
+    await db.from('news_events').update({ status }).eq('id', id);
+    loadNews();
+    showToast(`Post ${status} ✓`, 'success');
+  }
+
+  async function deleteNews(id) {
+    if (!confirm('Delete this post permanently?')) return;
+    await db.from('news_events').delete().eq('id', id);
+    loadNews();
+    showToast('Post deleted ✓', 'success');
+  }
+
+  function openPostNewsModal() {
+    document.getElementById('postNewsError').style.display = 'none';
+    ['anTitle','anExcerpt','anContent','anVideo','anImageUrl','anAuthor','anEventDate','anEventEndDate','anEventLocation','anEventLink'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    document.getElementById('anType').value = 'news';
+    document.getElementById('adminEventFields').style.display = 'none';
+    document.getElementById('postNewsModal').classList.add('open');
+  }
+
+  function closePostNewsModal() { document.getElementById('postNewsModal').classList.remove('open'); }
+
+  function toggleAdminEventFields() {
+    const isEvent = document.getElementById('anType').value === 'event';
+    document.getElementById('adminEventFields').style.display = isEvent ? 'block' : 'none';
+  }
+
+  async function submitAdminNews() {
+    const errEl = document.getElementById('postNewsError');
+    errEl.style.display = 'none';
+    const type = document.getElementById('anType').value;
+    const title = document.getElementById('anTitle').value.trim();
+    const excerpt = document.getElementById('anExcerpt').value.trim();
+    const content = document.getElementById('anContent').value.trim();
+    if (!title || !excerpt || !content) { errEl.textContent = 'Please fill in Title, Summary, and Content.'; errEl.style.display = 'block'; return; }
+    if (type === 'event' && !document.getElementById('anEventDate').value) { errEl.textContent = 'Please enter the event date.'; errEl.style.display = 'block'; return; }
+
+    const payload = {
+      type, title, excerpt, content,
+      author_name: document.getElementById('anAuthor').value.trim() || 'ECA Team',
+      video_url: document.getElementById('anVideo').value.trim() || null,
+      image_url: document.getElementById('anImageUrl').value.trim() || null,
+      status: 'approved',
+      posted_by: 'admin'
+    };
+    if (type === 'event') {
+      payload.event_date = document.getElementById('anEventDate').value || null;
+      payload.event_end_date = document.getElementById('anEventEndDate').value || null;
+      payload.event_location = document.getElementById('anEventLocation').value.trim() || null;
+      payload.event_link = document.getElementById('anEventLink').value.trim() || null;
+    }
+
+    const { error } = await db.from('news_events').insert([payload]);
+    if (error) { errEl.textContent = 'Error: ' + error.message; errEl.style.display = 'block'; return; }
+    closePostNewsModal();
+    loadNews();
+    showToast('Post published successfully ✓', 'success');
+  }
+
+  document.getElementById('postNewsModal').addEventListener('click', function(e) { if (e.target === this) closePostNewsModal(); });
+
+  // Updated showSection for all 5 tabs
+  function showSection(section) {
+    ['Members','Jobs','Courses','Messages','News'].forEach(s => {
+      const el = document.getElementById('section'+s);
+      const tab = document.getElementById('topTab'+s);
+      if(el) el.style.display = 'none';
+      if(tab){ tab.style.borderBottomColor='transparent'; tab.style.color='var(--gray)'; }
+    });
+    const cap = section.charAt(0).toUpperCase()+section.slice(1);
+    const active = document.getElementById('section'+cap);
+    const activeTab = document.getElementById('topTab'+cap);
+    if(active) active.style.display = 'block';
+    if(activeTab){ activeTab.style.borderBottomColor='var(--navy)'; activeTab.style.color='var(--navy)'; }
+    if(section==='jobs') loadJobsAndApplications();
+    if(section==='courses') loadCourses();
+    if(section==='messages') loadMessages();
+    if(section==='news') loadNews();
+  }
+</script>
+</body>
+</html>

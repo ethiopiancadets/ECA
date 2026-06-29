@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Member Login – Ethiopian Cadet Association</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --navy: #0a1628; --navy-mid: #112240; --blue: #1a4a8a;
+      --gold: #c8a84b; --gold-light: #e8c96b; --white: #f8f6f0;
+      --gray: #8a9ab5; --light-bg: #f4f1ea; --border: #e0e6ef;
+      --green: #2a7a4a; --red: #c0392b; --orange: #d4820a;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Barlow', sans-serif;
+      --radius: 10px; --shadow: 0 8px 32px rgba(10,22,40,0.12);
+      --transition: 0.25s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--white); color: var(--navy); line-height: 1.7; }
+
+    /* NAVBAR */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(10,22,40,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(200,168,75,0.2); }
+    .nav-container { max-width: 1180px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-main { font-family: var(--font-display); font-size: 22px; font-weight: 900; color: var(--gold); }
+    .logo-sub { font-size: 10px; color: var(--gray); letter-spacing: 1px; text-transform: uppercase; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; }
+    .nav-links a { color: rgba(248,246,240,0.8); font-size: 13.5px; font-weight: 500; padding: 6px 10px; border-radius: 5px; transition: var(--transition); text-decoration: none; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold) !important; color: var(--navy) !important; padding: 7px 18px !important; border-radius: 8px !important; font-weight: 700 !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; }
+
+    /* LOADING */
+    .loading-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--navy); }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(200,168,75,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* LOGIN */
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--blue) 100%); padding: 100px 20px 40px; }
+    .login-box { background: white; border-radius: 18px; padding: 48px 44px; width: 100%; max-width: 460px; box-shadow: 0 24px 64px rgba(0,0,0,0.3); }
+    .login-anchor { text-align: center; margin-bottom: 32px; }
+    .login-logo { font-family: var(--font-display); font-size: 32px; font-weight: 900; color: var(--navy); }
+    .login-logo span { color: var(--gold); }
+    .login-tagline { font-size: 14px; color: var(--gray); margin-top: 6px; }
+    .login-tabs { display: flex; background: var(--light-bg); border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+    .login-tab { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: transparent; font-family: var(--font-body); color: var(--gray); transition: var(--transition); }
+    .login-tab.active { background: white; color: var(--navy); box-shadow: 0 2px 8px rgba(10,22,40,0.1); }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--navy); margin-bottom: 7px; }
+    .form-group input { width: 100%; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: var(--font-body); font-size: 15px; color: var(--navy); background: var(--white); transition: var(--transition); outline: none; }
+    .form-group input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,74,138,0.1); }
+    .submit-btn { width: 100%; padding: 15px; background: var(--navy); color: var(--gold); border: none; border-radius: var(--radius); font-family: var(--font-body); font-size: 16px; font-weight: 700; cursor: pointer; transition: var(--transition); margin-top: 8px; }
+    .submit-btn:hover { background: var(--blue); }
+    .error-msg { background: #fff0f0; border: 1px solid #ffb3b3; color: var(--red); padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px; font-size: 14px; display: none; }
+    .success-msg { background: #f0fff4; border: 1px solid #a8e6c0; color: var(--green); padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px; font-size: 14px; display: none; }
+    .divider { text-align: center; color: var(--gray); font-size: 13px; margin: 20px 0; position: relative; }
+    .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border); }
+    .divider span { background: white; padding: 0 12px; position: relative; }
+    .register-link { text-align: center; font-size: 14px; color: var(--gray); }
+    .register-link a { color: var(--blue); font-weight: 600; text-decoration: none; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* DASHBOARD */
+    .dashboard { display: none; padding-top: 68px; min-height: 100vh; background: #eef1f6; }
+    .dash-header { background: var(--navy); padding: 36px 0 0; }
+    .dash-header-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .dash-welcome { display: flex; align-items: center; gap: 20px; padding-bottom: 4px; flex-wrap: wrap; }
+    .dash-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-light)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 26px; font-weight: 900; color: var(--navy); flex-shrink: 0; }
+    .dash-welcome-text h2 { font-family: var(--font-display); font-size: 26px; font-weight: 900; color: var(--white); }
+    .dash-welcome-text p { color: var(--gray); font-size: 14px; margin-top: 2px; }
+    .dash-tabs { display: flex; gap: 4px; margin-top: 24px; overflow-x: auto; }
+    .dash-tab { padding: 12px 22px; font-family: var(--font-body); font-size: 14px; font-weight: 600; color: rgba(248,246,240,0.6); border: none; background: transparent; cursor: pointer; border-bottom: 3px solid transparent; transition: var(--transition); white-space: nowrap; }
+    .dash-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .dash-tab:hover { color: var(--white); }
+    .dash-body { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+    /* STATUS BANNER */
+    .status-banner { border-radius: 12px; padding: 18px 22px; margin-bottom: 28px; display: flex; align-items: center; gap: 14px; }
+    .status-banner.pending { background: #fff8e6; border: 1px solid #f0d070; }
+    .status-banner.approved { background: #f0fff4; border: 1px solid #a8e6c0; }
+    .status-banner.rejected { background: #fff0f0; border: 1px solid #ffb3b3; }
+    .status-icon { font-size: 28px; flex-shrink: 0; }
+    .status-text h4 { font-size: 15px; font-weight: 700; }
+    .status-banner.pending .status-text h4 { color: var(--orange); }
+    .status-banner.approved .status-text h4 { color: var(--green); }
+    .status-banner.rejected .status-text h4 { color: var(--red); }
+    .status-text p { font-size: 13px; color: #5a6a7a; margin-top: 2px; }
+
+    /* STAT CARDS */
+    .stat-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: white; border-radius: 12px; padding: 22px 20px; box-shadow: var(--shadow); }
+    .stat-card-icon { font-size: 28px; margin-bottom: 10px; }
+    .stat-card-num { font-family: var(--font-display); font-size: 24px; font-weight: 900; color: var(--navy); }
+    .stat-card-label { font-size: 12px; color: var(--gray); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 4px; }
+
+    /* PANELS */
+    .dash-panel { display: none; }
+    .dash-panel.active { display: block; }
+    .panel-card { background: white; border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; }
+    .panel-card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .panel-card-header h3 { font-family: var(--font-display); font-size: 18px; font-weight: 900; }
+    .panel-card-body { padding: 24px; }
+
+    /* PROFILE FORM */
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+    .profile-field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+    .profile-field input, .profile-field select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; color: var(--navy); outline: none; transition: var(--transition); background: var(--white); }
+    .profile-field input:focus, .profile-field select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,74,138,0.08); }
+    .profile-field.full { grid-column: 1 / -1; }
+    .save-btn { background: var(--navy); color: var(--gold); border: none; padding: 13px 32px; border-radius: var(--radius); font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer; transition: var(--transition); margin-top: 16px; }
+    .save-btn:hover { background: var(--blue); }
+
+    /* QUICK LINKS */
+    .quick-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .quick-link { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 10px; border: 1.5px solid var(--border); text-decoration: none; transition: var(--transition); }
+    .quick-link:hover { border-color: var(--navy); background: var(--light-bg); }
+    .quick-link-icon { font-size: 26px; }
+    .quick-link-text strong { display: block; font-size: 14px; color: var(--navy); }
+    .quick-link-text span { font-size: 12px; color: var(--gray); }
+
+    /* CAREER TRACKER */
+    .career-step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .career-step:last-child { border-bottom: none; }
+    .step-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .step-dot.done { background: var(--gold); color: var(--navy); }
+    .step-dot.current { background: var(--navy); color: var(--gold); }
+    .step-dot.next { background: var(--border); color: var(--gray); }
+    .step-info h4 { font-size: 15px; font-weight: 700; }
+    .step-info p { font-size: 13px; color: var(--gray); margin-top: 2px; }
+    .step-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 20px; margin-top: 5px; }
+    .step-badge.done { background: #fff8e6; color: var(--orange); }
+    .step-badge.current { background: #e6eeff; color: var(--blue); }
+    .step-badge.next { background: #f0f2f5; color: var(--gray); }
+
+    /* BADGE */
+    .member-type-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+    .badge-cadet { background: #fff8e6; color: #a07820; }
+    .badge-expert { background: #f0eeff; color: #5040a0; }
+    .badge-company { background: #e6fff4; color: #1a7a4a; }
+
+    .logout-btn { background: transparent; border: 1px solid rgba(200,168,75,0.4); color: var(--gold); padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: var(--font-body); transition: var(--transition); }
+    .logout-btn:hover { background: rgba(200,168,75,0.1); }
+
+    .toast { position: fixed; bottom: 28px; right: 28px; background: var(--navy); color: white; padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 9999; transform: translateY(80px); opacity: 0; transition: 0.3s ease; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 4px solid var(--green); }
+    .toast.error { border-left: 4px solid var(--red); }
+
+    .footer { background: #060e1a; color: rgba(248,246,240,0.5); padding: 30px 24px; text-align: center; font-size: 13px; }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: var(--navy); flex-direction: column; padding: 20px; gap: 4px; border-bottom: 1px solid rgba(200,168,75,0.2); }
+      .nav-links.open { display: flex; }
+      .stat-cards { grid-template-columns: 1fr 1fr; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .quick-links { grid-template-columns: 1fr; }
+      .login-box { padding: 32px 20px; }
+    }
+    @media (max-width: 480px) { .stat-cards { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo">
+      <span style="font-size:22px">⚓</span>
+      <div><span class="logo-main">ECA</span><span class="logo-sub">Ethiopian Cadet Association</span></div>
+    </a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="training.html">Training & Courses</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="jobs.html">Job Board</a></li>
+      <li><a href="news.html">News & Events</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-cta">Join Us</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="spinner"></div>
+</div>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen" style="display:none">
+  <div class="login-box">
+    <div class="login-anchor">
+      <div class="login-logo">⚓ <span>ECA</span></div>
+      <div class="login-tagline">Ethiopian Cadet Association — Member Portal</div>
+    </div>
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="login-tab" onclick="switchTab('forgot')">Forgot Password</button>
+    </div>
+
+    <!-- LOGIN TAB -->
+    <div class="tab-panel active" id="loginPanel">
+      <div class="error-msg" id="loginError"></div>
+      <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="your@email.com"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Your password"/></div>
+      <button class="submit-btn" onclick="memberLogin()">Sign In to My Account</button>
+      <div class="divider"><span>New to ECA?</span></div>
+      <div class="register-link">No account yet? <a href="register.html">Register free →</a></div>
+    </div>
+
+    <!-- FORGOT PASSWORD TAB -->
+    <div class="tab-panel" id="forgotPanel">
+      <div class="success-msg" id="resetSuccess">Reset email sent! Check your inbox.</div>
+      <div class="error-msg" id="resetError"></div>
+      <div class="form-group"><label>Email Address</label><input type="email" id="resetEmail" placeholder="your@email.com"/></div>
+      <button class="submit-btn" onclick="resetPassword()">Send Reset Link</button>
+      <div class="divider"><span>Remember your password?</span></div>
+      <div class="register-link"><a href="#" onclick="switchTab('login')">← Back to Sign In</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboardScreen">
+  <div class="dash-header">
+    <div class="dash-header-inner">
+      <div class="dash-welcome">
+        <div class="dash-avatar" id="dashAvatar">?</div>
+        <div class="dash-welcome-text">
+          <h2 id="dashWelcome">Welcome back!</h2>
+          <p id="dashSubtitle">ECA Member</p>
+        </div>
+        <div style="margin-left:auto">
+          <button class="logout-btn" onclick="memberLogout()">Sign Out</button>
+        </div>
+      </div>
+      <div class="dash-tabs">
+        <button class="dash-tab active" id="tab-overview" onclick="showPanel('overview',this)">Overview</button>
+        <button class="dash-tab" id="tab-profile" onclick="showPanel('profile',this)">My Profile</button>
+        <button class="dash-tab" id="tab-career" onclick="showPanel('career',this)">Career Tracker</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- OVERVIEW -->
+    <div class="dash-panel active" id="panel-overview">
+      <div class="status-banner pending" id="statusBanner">
+        <div class="status-icon" id="statusIcon">⏳</div>
+        <div class="status-text">
+          <h4 id="statusTitle">Membership Pending Approval</h4>
+          <p id="statusDesc">Your application is being reviewed by the ECA team. You will be notified once approved.</p>
+        </div>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card"><div class="stat-card-icon">⚓</div><div class="stat-card-num" id="statRank">—</div><div class="stat-card-label">Current Rank</div></div>
+        <div class="stat-card"><div class="stat-card-icon">🌊</div><div class="stat-card-num" id="statYears">0</div><div class="stat-card-label">Years at Sea</div></div>
+        <div class="stat-card"><div class="stat-card-icon">📍</div><div class="stat-card-num" id="statStatus">—</div><div class="stat-card-label">Current Status</div></div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-card-header"><h3>Quick Access</h3></div>
+        <div class="panel-card-body">
+          <div class="quick-links">
+            <a href="employment.html" class="quick-link"><span class="quick-link-icon">💼</span><div class="quick-link-text"><strong>Job Board</strong><span>Find between-contract work</span></div></a>
+            <a href="courses.html" class="quick-link"><span class="quick-link-icon">📚</span><div class="quick-link-text"><strong>Training Courses</strong><span>Browse available courses</span></div></a>
+            <a href="news.html" class="quick-link"><span class="quick-link-icon">📅</span><div class="quick-link-text"><strong>Events</strong><span>Upcoming conferences & webinars</span></div></a>
+            <a href="contact.html" class="quick-link"><span class="quick-link-icon">✉️</span><div class="quick-link-text"><strong>Contact ECA</strong><span>Get in touch with the team</span></div></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="dash-panel" id="panel-profile">
+      <div class="panel-card">
+        <div class="panel-card-header">
+          <h3>My Profile</h3>
+          <span id="memberTypeBadge" class="member-type-badge badge-cadet">Cadet</span>
+        </div>
+        <div class="panel-card-body">
+          <div class="error-msg" id="profileError" style="margin-bottom:16px"></div>
+          <div class="profile-grid">
+            <div class="profile-field"><label>First Name</label><input type="text" id="pfFirstName"/></div>
+            <div class="profile-field"><label>Last Name</label><input type="text" id="pfLastName"/></div>
+            <div class="profile-field"><label>Email</label><input type="email" id="pfEmail" disabled style="opacity:0.6"/></div>
+            <div class="profile-field"><label>Phone</label><input type="tel" id="pfPhone"/></div>
+            <div class="profile-field"><label>City</label><input type="text" id="pfCity"/></div>
+            <div class="profile-field"><label>Nationality</label><input type="text" id="pfNationality"/></div>
+            <div class="profile-field"><label>Current Rank</label>
+              <select id="pfRank">
+                <option>Cadet / Trainee</option><option>4th Engineer</option><option>3rd Engineer</option>
+                <option>2nd Engineer</option><option>Chief Engineer</option>
+                <option>Electro-Technical Officer</option><option>Instructor / Trainer</option>
+                <option>Superintendent</option><option>Other</option>
+              </select>
+            </div>
+            <div class="profile-field"><label>Years at Sea</label><input type="number" id="pfSeaYears" min="0"/></div>
+            <div class="profile-field"><label>Vessel Type</label>
+              <select id="pfVesselType">
+                <option>Not yet at sea</option><option>Bulk Carrier</option><option>Container Ship</option>
+                <option>Tanker</option><option>Gas Carrier</option><option>General Cargo</option><option>Other</option>
+              </select>
+            </div>
+            <div class="profile-field"><label>Current Status</label>
+              <select id="pfStatus">
+                <option>Currently in Training (Pre-Sea)</option><option>Currently On Board Ship</option>
+                <option>Currently at Home (Between Contracts)</option>
+                <option>Looking for First Contract</option><option>Shore-Based (Instructor/Office)</option>
+              </select>
+            </div>
+            <div class="profile-field full"><label>Maritime Certificate</label><input type="text" id="pfCertificate" placeholder="e.g. STCW BST, COC OOW"/></div>
+          </div>
+          <button class="save-btn" onclick="saveProfile()">Save Changes ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAREER TRACKER -->
+    <div class="dash-panel" id="panel-career">
+      <div class="panel-card">
+        <div class="panel-card-header"><h3>Career Progression Tracker</h3></div>
+        <div class="panel-card-body">
+          <p style="font-size:14px;color:var(--gray);margin-bottom:20px">Your journey from Cadet to Chief Engineer.</p>
+          <div class="career-step"><div class="step-dot done">✓</div><div class="step-info"><h4>Joined ECA</h4><p>Became a member of the Ethiopian Cadet Association</p><span class="step-badge done">Completed</span></div></div>
+          <div class="career-step"><div class="step-dot next" id="dot2">2</div><div class="step-info"><h4>Pre-Sea Training (STCW BST)</h4><p>Complete Basic Safety Training certificate</p><span class="step-badge next" id="badge2">Upcoming</span></div></div>
+          <div class="career-step"><div class="step-dot next" id="dot3">3</div><div class="step-info"><h4>First Sea Contract</h4><p>Complete your first contract as Cadet or Junior Engineer</p><span class="step-badge next" id="badge3">Upcoming</span></div></div>
+          <div class="career-step"><div class="step-dot next">4</div><div class="step-info"><h4>Officer of the Watch (OOW)</h4><p>Achieve Certificate of Competency as OOW</p><span class="step-badge next">Upcoming</span></div></div>
+          <div class="career-step"><div class="step-dot next">5</div><div class="step-info"><h4>Chief Engineer / Senior Officer</h4><p>Reach the highest rank in your maritime career</p><span class="step-badge next">Upcoming</span></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="footer"><p>© 2025 Ethiopian Cadet Association. All rights reserved.</p></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+  const SUPABASE_URL = 'https://plxsxxdkumpuehzpemco.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBseHN4eGRrdW1wdWVoenBlbWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg4NzAsImV4cCI6MjA5NjMzNDg3MH0.azZ6388Ry7v2DXx-OmhXsJtmj6-Yk5PmgDy8nIzTtY4';
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  let currentMember = null;
+
+  // Check session on load
+  window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) { await loadMemberData(session.user.id); }
+    else { document.getElementById('loadingScreen').style.display = 'none'; document.getElementById('loginScreen').style.display = 'flex'; }
+  });
+
+  async function memberLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginError');
+    errEl.style.display = 'none';
+    if (!email || !password) { errEl.textContent = 'Please enter your email and password.'; errEl.style.display = 'block'; return; }
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) { errEl.textContent = 'Incorrect email or password. Please try again.'; errEl.style.display = 'block'; return; }
+    await loadMemberData(data.user.id);
+  }
+
+  async function loadMemberData(userId) {
+    document.getElementById('loadingScreen').style.display = 'flex';
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboardScreen').style.display = 'none';
+    const { data, error } = await db.from('members').select('*').eq('user_id', userId).single();
+    document.getElementById('loadingScreen').style.display = 'none';
+    if (error || !data) { document.getElementById('loginScreen').style.display = 'flex'; return; }
+    currentMember = data;
+    populateDashboard(data);
+    document.getElementById('dashboardScreen').style.display = 'block';
+  }
+
+  function populateDashboard(m) {
+    const initials = (m.first_name || '?')[0].toUpperCase();
+    document.getElementById('dashAvatar').textContent = initials;
+    document.getElementById('dashWelcome').textContent = `Welcome back, ${m.first_name}! 👋`;
+    document.getElementById('dashSubtitle').textContent = `${m.rank || 'ECA Member'} · ${m.city || 'Ethiopia'}`;
+
+    // Status banner
+    const configs = {
+      pending:  { cls:'pending',  icon:'⏳', title:'Membership Pending Approval',    desc:'Your application is being reviewed. You will be notified once approved.' },
+      approved: { cls:'approved', icon:'✅', title:'Membership Active — Welcome!',   desc:'Your ECA membership is active. Enjoy all member benefits.' },
+      rejected: { cls:'rejected', icon:'❌', title:'Membership Not Approved',        desc:'Please contact ECA at info@ethiopiancadet.org for more information.' }
+    };
+    const s = configs[m.status] || configs.pending;
+    const banner = document.getElementById('statusBanner');
+    banner.className = `status-banner ${s.cls}`;
+    document.getElementById('statusIcon').textContent = s.icon;
+    document.getElementById('statusTitle').textContent = s.title;
+    document.getElementById('statusDesc').textContent = s.desc;
+
+    // Stats
+    document.getElementById('statRank').textContent = (m.rank || '—').split(' ')[0];
+    document.getElementById('statYears').textContent = m.sea_years ?? 0;
+    const short = {'Currently On Board Ship':'On Board','Currently at Home (Between Contracts)':'At Home','Currently in Training (Pre-Sea)':'Training','Looking for First Contract':'Job Seeking','Shore-Based (Instructor/Office)':'Shore-Based'};
+    document.getElementById('statStatus').textContent = short[m.current_status] || m.current_status || '—';
+
+    // Profile form
+    document.getElementById('pfFirstName').value = m.first_name || '';
+    document.getElementById('pfLastName').value = m.last_name || '';
+    document.getElementById('pfEmail').value = m.email || '';
+    document.getElementById('pfPhone').value = m.phone || '';
+    document.getElementById('pfCity').value = m.city || '';
+    document.getElementById('pfNationality').value = m.nationality || '';
+    document.getElementById('pfSeaYears').value = m.sea_years || 0;
+    document.getElementById('pfCertificate').value = m.certificate || '';
+    setSelect('pfRank', m.rank);
+    setSelect('pfVesselType', m.vessel_type);
+    setSelect('pfStatus', m.current_status);
+
+    // Badge
+    const badge = document.getElementById('memberTypeBadge');
+    badge.className = `member-type-badge badge-${m.member_type}`;
+    badge.textContent = m.member_type ? m.member_type.charAt(0).toUpperCase() + m.member_type.slice(1) : 'Member';
+
+    // Career tracker
+    if ((m.sea_years || 0) > 0) {
+      document.getElementById('dot2').className = 'step-dot done'; document.getElementById('dot2').textContent = '✓';
+      document.getElementById('badge2').className = 'step-badge done'; document.getElementById('badge2').textContent = 'Completed';
+      document.getElementById('dot3').className = 'step-dot current';
+      document.getElementById('badge3').className = 'step-badge current'; document.getElementById('badge3').textContent = 'Current Stage';
+    } else if (m.rank && m.rank !== 'Cadet / Trainee') {
+      document.getElementById('dot2').className = 'step-dot current';
+      document.getElementById('badge2').className = 'step-badge current'; document.getElementById('badge2').textContent = 'In Progress';
+    }
+  }
+
+  function setSelect(id, val) {
+    if (!val) return;
+    const sel = document.getElementById(id);
+    for (let o of sel.options) { if (o.value === val || o.text === val) { sel.value = o.value; break; } }
+  }
+
+  async function saveProfile() {
+    const errEl = document.getElementById('profileError');
+    errEl.style.display = 'none';
+    const updates = {
+      first_name: document.getElementById('pfFirstName').value.trim(),
+      last_name: document.getElementById('pfLastName').value.trim(),
+      phone: document.getElementById('pfPhone').value.trim(),
+      city: document.getElementById('pfCity').value.trim(),
+      nationality: document.getElementById('pfNationality').value.trim(),
+      rank: document.getElementById('pfRank').value,
+      sea_years: parseInt(document.getElementById('pfSeaYears').value) || 0,
+      vessel_type: document.getElementById('pfVesselType').value,
+      current_status: document.getElementById('pfStatus').value,
+      certificate: document.getElementById('pfCertificate').value.trim()
+    };
+    const { error } = await db.from('members').update(updates).eq('user_id', currentMember.user_id);
+    if (error) { errEl.textContent = 'Could not save: ' + error.message; errEl.style.display = 'block'; return; }
+    Object.assign(currentMember, updates);
+    document.getElementById('dashWelcome').textContent = `Welcome back, ${updates.first_name}! 👋`;
+    showToast('Profile updated successfully ✓', 'success');
+  }
+
+  async function resetPassword() {
+    const email = document.getElementById('resetEmail').value.trim();
+    if (!email) return;
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: 'https://yabt16.github.io/member-login.html' });
+    if (error) { document.getElementById('resetError').textContent = error.message; document.getElementById('resetError').style.display = 'block'; }
+    else { document.getElementById('resetSuccess').style.display = 'block'; }
+  }
+
+  async function memberLogout() {
+    await db.auth.signOut();
+    currentMember = null;
+    document.getElementById('dashboardScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.login-tab').forEach((t,i) => t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='forgot'&&i===1)));
+    document.getElementById('loginPanel').classList.toggle('active', tab==='login');
+    document.getElementById('forgotPanel').classList.toggle('active', tab==='forgot');
+  }
+
+  function showPanel(name, btn) {
+    document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('navLinks').classList.toggle('open'));
+  document.addEventListener('keydown', e => { if (e.key === 'Enter' && document.getElementById('loginPanel').classList.contains('active')) memberLogin(); });
+</script>
+</body>
+</html>

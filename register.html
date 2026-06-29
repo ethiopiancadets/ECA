@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join ECA – Ethiopian Cadet Association</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- ✅ SUPABASE SDK — This connects your form to the database -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --navy: #0a1628; --navy-mid: #112240; --blue: #1a4a8a;
+      --gold: #c8a84b; --gold-light: #e8c96b; --white: #f8f6f0;
+      --gray: #8a9ab5; --light-bg: #f4f1ea;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Barlow', sans-serif;
+      --transition: 0.3s ease; --shadow: 0 8px 32px rgba(10,22,40,0.15); --radius: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--white); color: var(--navy); line-height: 1.7; font-size: 16px; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+    .btn { display: inline-block; padding: 13px 30px; font-family: var(--font-body); font-weight: 600; font-size: 15px; letter-spacing: 0.5px; border-radius: var(--radius); transition: var(--transition); cursor: pointer; border: 2px solid transparent; }
+    .btn-primary { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,168,75,0.35); }
+    .btn-outline-dark { background: transparent; color: var(--navy); border-color: var(--navy); }
+    .btn-outline-dark:hover { background: var(--navy); color: var(--white); }
+    .btn-lg { padding: 16px 40px; font-size: 17px; }
+
+    /* NAVBAR */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(10,22,40,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(200,168,75,0.2); }
+    .nav-container { max-width: 1180px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { font-size: 24px; }
+    .logo-main { display: block; font-family: var(--font-display); font-size: 22px; font-weight: 900; color: var(--gold); line-height: 1; }
+    .logo-sub { display: block; font-size: 10px; color: var(--gray); letter-spacing: 1px; text-transform: uppercase; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links li a { color: rgba(248,246,240,0.8); font-size: 13.5px; font-weight: 500; padding: 6px 10px; border-radius: 5px; transition: var(--transition); }
+    .nav-links li a:hover, .nav-links li a.active { color: var(--gold); }
+    .nav-cta { background: var(--gold) !important; color: var(--navy) !important; padding: 7px 18px !important; border-radius: var(--radius) !important; font-weight: 700 !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; }
+
+    /* PAGE HERO */
+    .page-hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--blue) 100%); padding: 130px 0 70px; position: relative; overflow: hidden; }
+    .page-hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 50%, rgba(200,168,75,0.07) 0%, transparent 60%); }
+    .page-hero .container { position: relative; z-index: 1; }
+    .page-hero-tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+    .page-hero h1 { font-family: var(--font-display); font-size: clamp(36px, 5vw, 62px); font-weight: 900; color: var(--white); line-height: 1.1; max-width: 700px; }
+    .page-hero p { color: var(--gray); font-size: 17px; max-width: 580px; margin-top: 16px; }
+
+    /* REGISTER LAYOUT */
+    .page-content { padding: 80px 0; }
+    .register-layout { display: grid; grid-template-columns: 1fr 1.8fr; gap: 50px; align-items: start; }
+    .benefit-item { display: flex; gap: 14px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid #e8ecf0; }
+    .benefit-item:last-child { border-bottom: none; }
+    .benefit-icon { width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, var(--navy), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .benefit-body h4 { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+    .benefit-body p { font-size: 13px; color: #6a7a8a; }
+    .section-tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+
+    /* MEMBER TYPE BUTTONS */
+    .member-types { display: flex; gap: 12px; margin-bottom: 36px; flex-wrap: wrap; }
+    .mtype-btn { flex: 1; min-width: 140px; padding: 16px 14px; border-radius: 10px; border: 2px solid #d8dde6; background: white; cursor: pointer; transition: var(--transition); text-align: center; font-family: var(--font-body); }
+    .mtype-btn.selected { border-color: var(--navy); background: var(--navy); }
+    .mtype-icon { font-size: 26px; display: block; margin-bottom: 6px; }
+    .mtype-label { font-size: 13px; font-weight: 700; color: var(--navy); }
+    .mtype-btn.selected .mtype-label { color: var(--gold); }
+    .mtype-desc { font-size: 11px; color: var(--gray); margin-top: 3px; }
+    .mtype-btn.selected .mtype-desc { color: rgba(248,246,240,0.6); }
+
+    /* STEP INDICATOR */
+    .step-indicator { display: flex; align-items: center; margin-bottom: 32px; }
+    .step-dot { width: 32px; height: 32px; border-radius: 50%; background: #e0e4ec; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #8a9ab5; transition: var(--transition); flex-shrink: 0; }
+    .step-dot.active { background: var(--navy); color: var(--gold); }
+    .step-dot.done { background: var(--gold); color: var(--navy); }
+    .step-line { flex: 1; height: 2px; background: #e0e4ec; }
+    .step-line.done { background: var(--gold); }
+
+    /* FORM */
+    .form-wrapper { background: var(--white); padding: 48px; border-radius: 14px; box-shadow: var(--shadow); }
+    .form-title { font-family: var(--font-display); font-size: 28px; font-weight: 900; margin-bottom: 8px; color: var(--navy); }
+    .form-subtitle { color: #6a7a8a; font-size: 15px; margin-bottom: 32px; }
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+    .form-group { margin-bottom: 22px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; color: var(--navy); margin-bottom: 7px; text-transform: uppercase; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 13px 16px; border: 1.5px solid #d8dde6; border-radius: var(--radius); font-family: var(--font-body); font-size: 15px; color: var(--navy); background: var(--white); transition: var(--transition); outline: none; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,74,138,0.1); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .step-nav { display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+
+    /* ERROR & STATUS */
+    .error-msg { background: #fff0f0; border: 1px solid #ffb3b3; color: #c0392b; padding: 12px 16px; border-radius: var(--radius); margin-bottom: 18px; font-size: 14px; display: none; }
+    .error-msg.show { display: block; }
+    .success-banner { background: #f0fff4; border: 1px solid #a8e6c0; color: #1a7a3a; padding: 12px 16px; border-radius: var(--radius); margin-bottom: 18px; font-size: 14px; display: none; }
+    .success-banner.show { display: block; }
+
+    /* SUCCESS SCREEN */
+    .success-screen { text-align: center; padding: 48px 24px; display: none; }
+    .success-screen .success-icon { font-size: 80px; margin-bottom: 20px; }
+    .success-screen h3 { font-family: var(--font-display); font-size: 32px; color: var(--navy); margin-bottom: 12px; }
+    .success-screen p { font-size: 16px; color: #5a6a7a; max-width: 480px; margin: 0 auto 28px; }
+
+    /* LOADING SPINNER */
+    .btn-loading { position: relative; pointer-events: none; opacity: 0.8; }
+    .btn-loading::after { content: ''; width: 16px; height: 16px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; margin-left: 10px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    .footer { background: #060e1a; color: rgba(248,246,240,0.7); padding: 70px 0 0; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; padding-bottom: 50px; }
+    .footer-logo { font-family: var(--font-display); font-size: 28px; font-weight: 900; color: var(--gold); margin-bottom: 14px; }
+    .footer-col p { font-size: 14px; line-height: 1.7; }
+    .footer-col h4 { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-size: 14px; color: rgba(248,246,240,0.6); transition: var(--transition); }
+    .footer-col ul li a:hover { color: var(--gold); }
+    .footer-bottom { border-top: 1px solid rgba(200,168,75,0.1); padding: 20px 24px; text-align: center; font-size: 13px; color: rgba(248,246,240,0.35); max-width: 1180px; margin: 0 auto; }
+
+    /* FADE IN */
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) { .register-layout { grid-template-columns: 1fr; } .form-wrapper { padding: 28px 20px; } }
+    @media (max-width: 768px) { .hamburger { display: flex; } .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: var(--navy); flex-direction: column; padding: 20px; gap: 4px; border-bottom: 1px solid rgba(200,168,75,0.2); } .nav-links.open { display: flex; } .nav-links li a { display: block; padding: 12px 16px; } .form-row { grid-template-columns: 1fr; } .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; } }
+    @media (max-width: 480px) { .member-types { flex-direction: column; } .footer-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">⚓</span>
+      <div class="logo-text">
+        <span class="logo-main">ECA</span>
+        <span class="logo-sub">Ethiopian Cadet Association</span>
+      </div>
+    </a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="training.html">Training & Courses</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="jobs.html">Job Board</a></li>
+      <li><a href="news.html">News & Events</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-cta active">Join Us</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-tag">Free Membership</span>
+    <h1>Join the Ethiopian Cadet Association</h1>
+    <p>Become part of Ethiopia's maritime community. Access training, scholarships, job opportunities, and professional mentorship — all in one place.</p>
+  </div>
+</section>
+
+<section class="page-content">
+  <div class="container">
+    <div class="register-layout">
+
+      <!-- BENEFITS COLUMN -->
+      <div class="fade-in">
+        <span class="section-tag">Why Join ECA?</span>
+        <h2 style="font-family:var(--font-display);font-size:28px;margin-bottom:24px;line-height:1.2;">Everything You Need for Your Maritime Career</h2>
+        <div class="benefit-item"><div class="benefit-icon">🎓</div><div class="benefit-body"><h4>Expert-Taught Online Courses</h4><p>Access marine engineering courses by senior experts, earn certificates, and advance your rank.</p></div></div>
+        <div class="benefit-item"><div class="benefit-icon">💰</div><div class="benefit-body"><h4>Scholarship Applications</h4><p>Apply for open scholarships, track deadlines, and get notified about new funding opportunities.</p></div></div>
+        <div class="benefit-item"><div class="benefit-icon">💼</div><div class="benefit-body"><h4>Between-Contract Job Board</h4><p>Find short-term work in Ethiopia during your contract gap. Stay employed, stay active.</p></div></div>
+        <div class="benefit-item"><div class="benefit-icon">📈</div><div class="benefit-body"><h4>Career Progression Tracker</h4><p>Track your sea service, promotions, and every step from Cadet to Chief Engineer.</p></div></div>
+        <div class="benefit-item"><div class="benefit-icon">📅</div><div class="benefit-body"><h4>Event Access & Discounts</h4><p>Priority registration and member discounts for all ECA conferences, workshops, and webinars.</p></div></div>
+        <div class="benefit-item"><div class="benefit-icon">🌍</div><div class="benefit-body"><h4>Global Professional Network</h4><p>Connect with 500+ Ethiopian maritime professionals in 20+ countries around the world.</p></div></div>
+        <div style="background:var(--light-bg);border-radius:12px;padding:24px;margin-top:28px">
+          <p style="font-size:14px;color:#5a6a7a;margin-bottom:0">🔒 <strong>Your data is safe.</strong> ECA does not share your personal information with third parties.</p>
+        </div>
+      </div>
+
+      <!-- REGISTRATION FORM COLUMN -->
+      <div class="fade-in">
+        <div class="form-wrapper">
+
+          <div class="form-title">Create Your Free Account</div>
+          <div class="form-subtitle">Choose your membership type to get started.</div>
+
+          <!-- Member Type Selector -->
+          <div class="member-types" id="memberTypes">
+            <button class="mtype-btn selected" onclick="selectType(this,'cadet')">
+              <span class="mtype-icon">⚓</span>
+              <span class="mtype-label">Cadet / Officer</span>
+              <span class="mtype-desc">Currently training or at sea</span>
+            </button>
+            <button class="mtype-btn" onclick="selectType(this,'expert')">
+              <span class="mtype-icon">👨‍🏫</span>
+              <span class="mtype-label">Expert / Instructor</span>
+              <span class="mtype-desc">Post courses & mentor cadets</span>
+            </button>
+            <button class="mtype-btn" onclick="selectType(this,'company')">
+              <span class="mtype-icon">🏢</span>
+              <span class="mtype-label">Company</span>
+              <span class="mtype-desc">Post vacancies & hire talent</span>
+            </button>
+          </div>
+
+          <!-- Step Indicator -->
+          <div class="step-indicator">
+            <div class="step-dot active" id="dot1">1</div>
+            <div class="step-line" id="line1"></div>
+            <div class="step-dot" id="dot2">2</div>
+            <div class="step-line" id="line2"></div>
+            <div class="step-dot" id="dot3">3</div>
+          </div>
+
+          <!-- Error/Success banners -->
+          <div class="error-msg" id="errorMsg"></div>
+          <div class="success-banner" id="successBanner"></div>
+
+          <form id="regForm" autocomplete="off">
+
+            <!-- STEP 1: Personal Info -->
+            <div class="form-step active" id="step1">
+              <h4 style="font-family:var(--font-display);font-size:18px;margin-bottom:20px;color:var(--navy)">Step 1 — Personal Information</h4>
+              <div class="form-row">
+                <div class="form-group"><label>First Name *</label><input type="text" id="firstName" placeholder="Abebe" required/></div>
+                <div class="form-group"><label>Last Name *</label><input type="text" id="lastName" placeholder="Tadesse" required/></div>
+              </div>
+              <div class="form-group"><label>Email Address *</label><input type="email" id="email" placeholder="abebe@email.com" required/></div>
+              <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="+251 9xx xxx xxx"/></div>
+              <div class="form-row">
+                <div class="form-group"><label>Date of Birth</label><input type="date" id="dob"/></div>
+                <div class="form-group"><label>Nationality *</label><input type="text" id="nationality" value="Ethiopian"/></div>
+              </div>
+              <div class="form-group"><label>City / Region</label><input type="text" id="city" placeholder="Addis Ababa"/></div>
+              <div class="step-nav">
+                <div></div>
+                <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next: Maritime Details →</button>
+              </div>
+            </div>
+
+            <!-- STEP 2: Maritime Background -->
+            <div class="form-step" id="step2">
+              <h4 style="font-family:var(--font-display);font-size:18px;margin-bottom:20px;color:var(--navy)" id="step2Title">Step 2 — Maritime Background</h4>
+
+              <!-- CADET / OFFICER FIELDS -->
+              <div id="cadetFields">
+                <div class="form-group">
+                  <label>Current Rank / Position *</label>
+                  <select id="rank">
+                    <option value="">— Select your rank —</option>
+                    <option>Cadet / Trainee</option>
+                    <option>4th Engineer</option>
+                    <option>3rd Engineer</option>
+                    <option>2nd Engineer</option>
+                    <option>Chief Engineer</option>
+                    <option>Electro-Technical Officer</option>
+                    <option>Instructor / Trainer</option>
+                    <option>Superintendent</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label>Years of Sea Service</label><input type="number" id="seaYears" placeholder="0" min="0"/></div>
+                  <div class="form-group">
+                    <label>Vessel Type</label>
+                    <select id="vesselType">
+                      <option>Not yet at sea</option>
+                      <option>Bulk Carrier</option>
+                      <option>Container Ship</option>
+                      <option>Tanker</option>
+                      <option>Gas Carrier</option>
+                      <option>General Cargo</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Current Status *</label>
+                  <select id="status">
+                    <option>Currently in Training (Pre-Sea)</option>
+                    <option>Currently On Board Ship</option>
+                    <option>Currently at Home (Between Contracts)</option>
+                    <option>Looking for First Contract</option>
+                    <option>Shore-Based (Instructor/Office)</option>
+                  </select>
+                </div>
+                <div class="form-group"><label>Highest Maritime Certificate</label><input type="text" id="certificate" placeholder="e.g. STCW BST, COC OOW, etc."/></div>
+                <div class="form-group"><label>What brought you to ECA? (Optional)</label><textarea id="motivation" rows="3" placeholder="Tell us a bit about yourself and what you are looking for..."></textarea></div>
+              </div>
+
+              <!-- EXPERT / INSTRUCTOR FIELDS -->
+              <div id="expertFields" style="display:none">
+                <div class="form-group"><label>Area of Expertise *</label><input type="text" id="expertiseArea" placeholder="e.g. Marine Engineering, Navigation, Safety Training"/></div>
+                <div class="form-group"><label>Years of Experience *</label><input type="number" id="yearsExperience" placeholder="0" min="0"/></div>
+                <div class="form-group"><label>Highest Maritime Certificate / Qualification</label><input type="text" id="expertCertificate" placeholder="e.g. Master Mariner, Chief Engineer COC"/></div>
+                <div class="form-group"><label>Short Bio *</label><textarea id="expertBio" rows="4" placeholder="Tell cadets about your background and what you can teach..."></textarea></div>
+              </div>
+
+              <!-- COMPANY FIELDS -->
+              <div id="companyFields" style="display:none">
+                <div class="form-row">
+                  <div class="form-group"><label>Company Name *</label><input type="text" id="companyName" placeholder="e.g. Addis Maritime Services PLC"/></div>
+                  <div class="form-group">
+                    <label>Company Type *</label>
+                    <select id="companyType">
+                      <option value="">— Select type —</option>
+                      <option>Shipping / Maritime</option>
+                      <option>Logistics & Freight</option>
+                      <option>Manufacturing</option>
+                      <option>Construction</option>
+                      <option>Oil, Gas & Mining</option>
+                      <option>Hospitality</option>
+                      <option>Training Institute</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label>Contact Person Name *</label><input type="text" id="contactPersonName" placeholder="Full name"/></div>
+                  <div class="form-group"><label>Position / Title *</label><input type="text" id="contactPosition" placeholder="e.g. HR Manager"/></div>
+                </div>
+                <div class="form-group"><label>Office Address *</label><input type="text" id="officeAddress" placeholder="Street, building, area"/></div>
+                <div class="form-group"><label>Company Website (Optional)</label><input type="url" id="companyWebsite" placeholder="https://..."/></div>
+              </div>
+
+              <div class="step-nav">
+                <button type="button" class="btn btn-outline-dark" onclick="nextStep(1)">← Back</button>
+                <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next: Account Setup →</button>
+              </div>
+            </div>
+
+            <!-- STEP 3: Account -->
+            <div class="form-step" id="step3">
+              <h4 style="font-family:var(--font-display);font-size:18px;margin-bottom:20px;color:var(--navy)">Step 3 — Create Your Account</h4>
+              <div class="form-group"><label>Choose a Username *</label><input type="text" id="username" placeholder="abebe_tadesse" required/></div>
+              <div class="form-group"><label>Password *</label><input type="password" id="password" placeholder="Minimum 8 characters" required/></div>
+              <div class="form-group"><label>Confirm Password *</label><input type="password" id="confirmPassword" placeholder="Repeat your password" required/></div>
+              <div style="background:var(--light-bg);border-radius:8px;padding:16px;margin-bottom:20px">
+                <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px;color:#4a5a70">
+                  <input type="checkbox" id="termsCheck" style="margin-top:2px;flex-shrink:0" required/>
+                  <span>I agree to the ECA Terms of Membership and Privacy Policy. I confirm that the information I have provided is accurate.</span>
+                </label>
+              </div>
+              <div style="background:var(--light-bg);border-radius:8px;padding:16px;margin-bottom:24px">
+                <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px;color:#4a5a70">
+                  <input type="checkbox" id="newsletterCheck" style="margin-top:2px;flex-shrink:0"/>
+                  <span>Send me the ECA maritime newsletter and event notifications (optional).</span>
+                </label>
+              </div>
+              <div class="step-nav">
+                <button type="button" class="btn btn-outline-dark" onclick="nextStep(2)">← Back</button>
+                <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitForm()" style="min-width:200px">Create My Account ✓</button>
+              </div>
+            </div>
+
+          </form>
+
+          <!-- SUCCESS SCREEN -->
+          <div class="success-screen" id="successScreen">
+            <div class="success-icon">🎉</div>
+            <h3>Welcome to ECA!</h3>
+            <p>Your membership account has been created successfully. Please check your email inbox for a <strong>confirmation link</strong> — click it to activate your account.</p>
+            <a href="index.html" class="btn btn-primary btn-lg">Go to Homepage</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-col"><div class="footer-logo">⚓ ECA</div><p>Ethiopian Cadet Association — Maritime Excellence.</p></div>
+      <li><a href="jobs.html">Job Board</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="news.html">News & Events</a></li><li><a href="news.html">News & Events</a></li><li><a href="contact.html">Contact</a></li><li><a href="register.html">Membership</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><p>📧 info@ethiopiancadet.org</p><p>📞 +251 911 000 000</p><p>📍 Addis Ababa, Ethiopia</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2025 Ethiopian Cadet Association. All rights reserved.</p></div>
+</footer>
+
+<script>
+  // ============================================================
+  // ✅ STEP 1: PASTE YOUR SUPABASE CREDENTIALS HERE
+  // You get these from: supabase.com → Your Project → Settings → API
+  // ============================================================
+  const SUPABASE_URL = 'https://plxsxxdkumpuehzpemco.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBseHN4eGRrdW1wdWVoenBlbWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg4NzAsImV4cCI6MjA5NjMzNDg3MH0.azZ6388Ry7v2DXx-OmhXsJtmj6-Yk5PmgDy8nIzTtY4';
+
+  // Initialize Supabase client
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ============================================================
+  // FORM STATE
+  // ============================================================
+  let currentStep = 1;
+  let selectedType = 'cadet';
+
+  function selectType(btn, type) {
+    document.querySelectorAll('.mtype-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedType = type;
+
+    // Toggle field groups
+    document.getElementById('cadetFields').style.display = type === 'cadet' ? 'block' : 'none';
+    document.getElementById('expertFields').style.display = type === 'expert' ? 'block' : 'none';
+    document.getElementById('companyFields').style.display = type === 'company' ? 'block' : 'none';
+
+    // Update step title
+    const titles = { cadet: 'Step 2 — Maritime Background', expert: 'Step 2 — Professional Background', company: 'Step 2 — Company Details' };
+    document.getElementById('step2Title').textContent = titles[type];
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+    document.getElementById('successBanner').classList.remove('show');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function hideMessages() {
+    document.getElementById('errorMsg').classList.remove('show');
+    document.getElementById('successBanner').classList.remove('show');
+  }
+
+  function nextStep(n) {
+    // Basic validation for Step 1
+    if (currentStep === 1 && n === 2) {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      if (!firstName || !lastName || !email) {
+        showError('Please fill in all required fields (First Name, Last Name, Email).');
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('Please enter a valid email address.');
+        return;
+      }
+    }
+    // Basic validation for Step 2
+    if (currentStep === 2 && n === 3) {
+      if (selectedType === 'cadet') {
+        const rank = document.getElementById('rank').value;
+        if (!rank) { showError('Please select your current rank or position.'); return; }
+      } else if (selectedType === 'expert') {
+        const expertise = document.getElementById('expertiseArea').value.trim();
+        const years = document.getElementById('yearsExperience').value;
+        const bio = document.getElementById('expertBio').value.trim();
+        if (!expertise || !years || !bio) { showError('Please fill in your area of expertise, years of experience, and a short bio.'); return; }
+      } else if (selectedType === 'company') {
+        const companyName = document.getElementById('companyName').value.trim();
+        const companyType = document.getElementById('companyType').value;
+        const contactName = document.getElementById('contactPersonName').value.trim();
+        const contactPos = document.getElementById('contactPosition').value.trim();
+        const address = document.getElementById('officeAddress').value.trim();
+        if (!companyName || !companyType || !contactName || !contactPos || !address) {
+          showError('Please fill in all required company fields (marked *).');
+          return;
+        }
+      }
+    }
+
+    hideMessages();
+    document.getElementById('step' + currentStep).classList.remove('active');
+    document.getElementById('dot' + currentStep).classList.remove('active');
+    document.getElementById('dot' + currentStep).classList.add('done');
+    if (currentStep < 3) document.getElementById('line' + currentStep).classList.add('done');
+
+    // If going back
+    if (n < currentStep) {
+      document.getElementById('dot' + currentStep).classList.remove('done');
+      document.getElementById('dot' + currentStep).classList.remove('active');
+      if (currentStep <= 3) document.getElementById('line' + (currentStep - 1)).classList.remove('done');
+    }
+
+    currentStep = n;
+    document.getElementById('step' + currentStep).classList.add('active');
+    document.getElementById('dot' + currentStep).classList.add('active');
+    document.getElementById('dot' + currentStep).classList.remove('done');
+    document.querySelector('.form-wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  async function submitForm() {
+    hideMessages();
+
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const termsCheck = document.getElementById('termsCheck').checked;
+    const username = document.getElementById('username').value.trim();
+
+    if (!username) { showError('Please choose a username.'); return; }
+    if (password.length < 8) { showError('Password must be at least 8 characters.'); return; }
+    if (password !== confirmPassword) { showError('Passwords do not match. Please try again.'); return; }
+    if (!termsCheck) { showError('You must agree to the Terms of Membership to continue.'); return; }
+
+    // Show loading state
+    const btn = document.getElementById('submitBtn');
+    btn.classList.add('btn-loading');
+    btn.textContent = 'Creating Account';
+
+    const email = document.getElementById('email').value.trim();
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+
+    try {
+      // ---- 1. Create auth account in Supabase ----
+      const { data: authData, error: authError } = await db.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          emailRedirectTo: 'https://yabt16.github.io/register.html',
+          data: {
+            username: username,
+            full_name: firstName + ' ' + lastName,
+            member_type: selectedType
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      // ---- 2. Build profile data based on member type ----
+      let profileData = {
+        user_id: authData.user.id,
+        member_type: selectedType,
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        phone: document.getElementById('phone').value.trim(),
+        date_of_birth: document.getElementById('dob').value || null,
+        nationality: document.getElementById('nationality').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        username: username,
+        newsletter_opt_in: document.getElementById('newsletterCheck').checked,
+        status: 'pending'
+      };
+
+      if (selectedType === 'cadet') {
+        profileData = {
+          ...profileData,
+          rank: document.getElementById('rank').value,
+          sea_years: parseInt(document.getElementById('seaYears').value) || 0,
+          vessel_type: document.getElementById('vesselType').value,
+          current_status: document.getElementById('status').value,
+          certificate: document.getElementById('certificate').value.trim(),
+          motivation: document.getElementById('motivation').value.trim()
+        };
+      } else if (selectedType === 'expert') {
+        profileData = {
+          ...profileData,
+          expertise_area: document.getElementById('expertiseArea').value.trim(),
+          years_experience: parseInt(document.getElementById('yearsExperience').value) || 0,
+          certificate: document.getElementById('expertCertificate').value.trim(),
+          bio: document.getElementById('expertBio').value.trim()
+        };
+      } else if (selectedType === 'company') {
+        profileData = {
+          ...profileData,
+          company_name: document.getElementById('companyName').value.trim(),
+          company_type: document.getElementById('companyType').value,
+          contact_person_name: document.getElementById('contactPersonName').value.trim(),
+          contact_position: document.getElementById('contactPosition').value.trim(),
+          office_address: document.getElementById('officeAddress').value.trim(),
+          company_website: document.getElementById('companyWebsite').value.trim()
+        };
+      }
+
+      // ---- 3. Save profile to members table ----
+      const { error: profileError } = await db.from('members').insert([profileData]);
+
+      if (profileError) throw profileError;
+
+      // ---- 4. Show success screen ----
+      document.getElementById('step3').classList.remove('active');
+      document.getElementById('dot3').classList.add('done');
+      document.getElementById('line2').classList.add('done');
+      document.getElementById('regForm').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      document.querySelector('.step-indicator').style.display = 'none';
+      document.getElementById('memberTypes').style.display = 'none';
+      document.querySelector('.form-title').style.display = 'none';
+      document.querySelector('.form-subtitle').style.display = 'none';
+
+    } catch (err) {
+      console.error('Registration error:', err);
+      btn.classList.remove('btn-loading');
+      btn.textContent = 'Create My Account ✓';
+
+      if (err.message.includes('already registered') || err.message.includes('User already registered')) {
+        showError('This email address is already registered. Try logging in instead.');
+      } else if (err.message.includes('duplicate') && err.message.includes('username')) {
+        showError('That username is already taken. Please choose another.');
+      } else {
+        showError('Registration failed: ' + err.message);
+      }
+    }
+  }
+
+  // Navbar scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').style.boxShadow = window.scrollY > 50 ? '0 4px 30px rgba(0,0,0,0.3)' : 'none';
+  });
+
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+
+  // Fade in animation
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Between-Contract Employment – Ethiopian Cadet Association</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+  /* ============ BASE STYLES ============ */
+  :root{--navy:#0a1628;--navy-mid:#112240;--blue:#1a4a8a;--gold:#c8a84b;--gold-light:#e8c96b;--white:#f8f6f0;--gray:#8a9ab5;--light-bg:#f4f1ea;--font-display:'Playfair Display',Georgia,serif;--font-body:'Barlow',sans-serif;--transition:0.3s ease;--shadow:0 8px 32px rgba(10,22,40,0.15);--radius:8px}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--white);color:var(--navy);line-height:1.7;font-size:16px}
+  a{text-decoration:none;color:inherit}
+  ul{list-style:none}
+  .container{max-width:1180px;margin:0 auto;padding:0 24px}
+  .btn{display:inline-block;padding:13px 30px;font-family:var(--font-body);font-weight:600;font-size:15px;letter-spacing:.5px;border-radius:var(--radius);transition:var(--transition);cursor:pointer;border:2px solid transparent}
+  .btn-primary{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+  .btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,168,75,.35)}
+  .btn-outline{background:transparent;color:var(--white);border-color:var(--white)}
+  .btn-outline:hover{background:var(--white);color:var(--navy)}
+  .btn-outline-dark{background:transparent;color:var(--navy);border-color:var(--navy)}
+  .btn-outline-dark:hover{background:var(--navy);color:var(--white)}
+  .btn-lg{padding:16px 40px;font-size:17px}
+  .section-tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+  .section{padding:90px 0}
+  /* ============ NAVBAR ============ */
+  .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(10,22,40,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,168,75,.2);transition:var(--transition)}
+  .nav-container{max-width:1180px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo-icon{font-size:24px}
+  .logo-main{display:block;font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--gold);line-height:1}
+  .logo-sub{display:block;font-size:10px;color:var(--gray);letter-spacing:1px;text-transform:uppercase}
+  .nav-links{display:flex;align-items:center;gap:6px}
+  .nav-links li a{color:rgba(248,246,240,.8);font-size:13.5px;font-weight:500;padding:6px 10px;border-radius:5px;transition:var(--transition)}
+  .nav-links li a:hover,.nav-links li a.active{color:var(--gold)}
+  .nav-cta{background:var(--gold)!important;color:var(--navy)!important;padding:7px 18px!important;border-radius:var(--radius)!important;font-weight:700!important}
+  .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+  .hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px;transition:var(--transition)}
+  /* ============ PAGE HERO ============ */
+  .page-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,var(--blue) 100%);padding:130px 0 70px;position:relative;overflow:hidden}
+  .page-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(200,168,75,.07) 0%,transparent 60%)}
+  .page-hero .container{position:relative;z-index:1}
+  .page-hero-tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  .page-hero h1{font-family:var(--font-display);font-size:clamp(36px,5vw,62px);font-weight:900;color:var(--white);line-height:1.1;max-width:760px}
+  .page-hero p{color:var(--gray);font-size:17px;max-width:600px;margin-top:16px}
+  /* ============ MAIN TABS ============ */
+  .main-tabs{display:flex;gap:0;border-bottom:2px solid #e0e4ec;margin-bottom:50px;overflow-x:auto}
+  .main-tab{padding:16px 24px;font-family:var(--font-body);font-size:14px;font-weight:600;background:none;border:none;cursor:pointer;color:#6a7a8a;border-bottom:3px solid transparent;margin-bottom:-2px;transition:var(--transition);white-space:nowrap}
+  .main-tab.active,.main-tab:hover{color:var(--navy);border-bottom-color:var(--gold)}
+  .tab-panel{display:none}.tab-panel.active{display:block}
+  /* ============ HERO BANNER ============ */
+  .program-banner{background:linear-gradient(135deg,#0a1628,#1a3a6a);border-radius:16px;padding:52px;color:white;margin-bottom:56px;position:relative;overflow:hidden}
+  .program-banner::before{content:'⚓';position:absolute;right:40px;bottom:-20px;font-size:180px;opacity:.04;pointer-events:none}
+  .program-banner-inner{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;position:relative;z-index:1}
+  .pb-tag{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+  .program-banner h2{font-family:var(--font-display);font-size:clamp(24px,3.5vw,38px);font-weight:900;color:white;margin-bottom:14px;line-height:1.1}
+  .program-banner p{color:var(--gray);font-size:15px;line-height:1.7;max-width:520px;margin-bottom:24px}
+  .pb-stats{display:flex;flex-direction:column;gap:12px;flex-shrink:0}
+  .pb-stat{background:rgba(200,168,75,.1);border:1px solid rgba(200,168,75,.25);border-radius:10px;padding:16px 24px;text-align:center;min-width:120px}
+  .pb-stat-num{font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--gold);display:block;line-height:1}
+  .pb-stat-label{font-size:11px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+  /* ============ JOB CATEGORIES ============ */
+  .job-cats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:48px}
+  .jcat-card{background:white;border-radius:12px;padding:24px 18px;text-align:center;box-shadow:0 3px 16px rgba(10,22,40,.07);border:1px solid rgba(10,22,40,.06);transition:var(--transition);cursor:pointer;border-bottom:3px solid transparent}
+  .jcat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-bottom-color:var(--gold)}
+  .jcat-icon{font-size:36px;margin-bottom:12px;display:block}
+  .jcat-card h4{font-family:var(--font-display);font-size:15px;margin-bottom:6px;color:var(--navy)}
+  .jcat-card p{font-size:12px;color:var(--gray);line-height:1.4}
+  .jcat-count{display:inline-block;margin-top:10px;background:var(--light-bg);color:var(--navy);font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px}
+  /* ============ TALENT POOL ============ */
+  .talent-pool-header{background:linear-gradient(135deg,var(--navy),#0d3060);border-radius:14px;padding:40px;color:white;margin-bottom:36px;position:relative;overflow:hidden}
+  .talent-pool-header::after{content:'👥';position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:100px;opacity:.06}
+  .talent-pool-header h3{font-family:var(--font-display);font-size:28px;color:var(--gold);margin-bottom:10px}
+  .talent-pool-header p{color:var(--gray);max-width:580px;font-size:15px;line-height:1.7}
+  .search-bar{display:flex;gap:12px;margin:20px 0;flex-wrap:wrap}
+  .search-bar input,.search-bar select{padding:12px 16px;border:1.5px solid #d8dde6;border-radius:var(--radius);font-family:var(--font-body);font-size:14px;background:white;outline:none;transition:var(--transition)}
+  .search-bar input{flex:1;min-width:200px}
+  .search-bar input:focus,.search-bar select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,74,138,.1)}
+  .search-bar .btn{padding:12px 24px;white-space:nowrap}
+  .talent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .talent-card{background:white;border-radius:12px;padding:24px;box-shadow:0 3px 16px rgba(10,22,40,.07);border:1px solid rgba(10,22,40,.06);transition:var(--transition)}
+  .talent-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .talent-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+  .talent-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:2px solid var(--gold)}
+  .talent-name{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--navy)}
+  .talent-rank{font-size:12px;color:var(--gray);margin-top:2px}
+  .status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:6px}
+  .status-available{background:#d4edda;color:#155724}
+  .status-waiting{background:#fff3cd;color:#856404}
+  .status-onboard{background:#d1ecf1;color:#0c5460}
+  .talent-details{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+  .td-item{font-size:13px;color:#5a6a7a;display:flex;gap:6px}
+  .td-item strong{color:var(--navy);min-width:60px}
+  .talent-skills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+  .skill-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;background:var(--light-bg);color:#3a4a5a}
+  .talent-footer{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid #eef0f4}
+  .contact-talent{padding:7px 16px;background:var(--navy);color:var(--gold);border-radius:6px;font-size:12px;font-weight:700;transition:var(--transition)}
+  .contact-talent:hover{background:var(--blue)}
+  .premium-badge{font-size:11px;color:var(--gold);font-weight:700}
+  /* ============ FOR CADETS ============ */
+  .for-cadets-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  .steps-list{display:flex;flex-direction:column;gap:0}
+  .step-item{display:flex;gap:20px;padding:24px 0;border-bottom:1px solid #e8ecf0}
+  .step-item:last-child{border-bottom:none}
+  .step-circle{width:48px;height:48px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;font-weight:900;flex-shrink:0}
+  .step-body h4{font-family:var(--font-display);font-size:17px;margin-bottom:5px;color:var(--navy)}
+  .step-body p{font-size:14px;color:#5a6a7a}
+  .cadet-benefits{background:var(--navy);border-radius:14px;padding:36px;color:white}
+  .cadet-benefits h3{font-family:var(--font-display);font-size:22px;color:var(--gold);margin-bottom:20px}
+  .benefit-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(200,168,75,.1)}
+  .benefit-row:last-child{border-bottom:none}
+  .benefit-row-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+  .benefit-row-text h5{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:2px}
+  .benefit-row-text p{font-size:13px;color:var(--gray)}
+  /* ============ FOR EMPLOYERS ============ */
+  .employer-hero{background:linear-gradient(135deg,#0a2a50,var(--blue));border-radius:14px;padding:44px;color:white;margin-bottom:40px;display:flex;justify-content:space-between;align-items:center;gap:32px;flex-wrap:wrap}
+  .employer-hero h3{font-family:var(--font-display);font-size:28px;color:var(--gold);margin-bottom:10px}
+  .employer-hero p{color:var(--gray);max-width:500px;font-size:15px}
+  .employer-actions{display:flex;flex-direction:column;gap:12px;flex-shrink:0}
+  .employer-features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+  .ef-card{background:var(--light-bg);border-radius:10px;padding:28px;border-left:4px solid var(--gold);transition:var(--transition)}
+  .ef-card:hover{background:white;box-shadow:var(--shadow)}
+  .ef-icon{font-size:32px;margin-bottom:14px}
+  .ef-card h4{font-family:var(--font-display);font-size:18px;margin-bottom:8px;color:var(--navy)}
+  .ef-card p{font-size:13px;color:#5a6a7a;line-height:1.6}
+  .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .pricing-card{background:white;border-radius:14px;padding:32px;box-shadow:0 4px 20px rgba(10,22,40,.08);border:1px solid rgba(10,22,40,.06);text-align:center;transition:var(--transition);position:relative}
+  .pricing-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .pricing-card.featured{background:var(--navy);color:white;border-color:var(--gold)}
+  .pricing-popular{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap}
+  .pricing-tier{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+  .pricing-card.featured .pricing-tier{color:var(--gold-light)}
+  .pricing-price{font-family:var(--font-display);font-size:38px;font-weight:900;color:var(--navy);margin-bottom:4px}
+  .pricing-card.featured .pricing-price{color:var(--white)}
+  .pricing-period{font-size:13px;color:var(--gray);margin-bottom:20px}
+  .pricing-features{text-align:left;margin-bottom:24px;display:flex;flex-direction:column;gap:8px}
+  .pf-item{font-size:13px;color:#4a5a70;display:flex;gap:8px}
+  .pricing-card.featured .pf-item{color:rgba(248,246,240,.8)}
+  .pf-check{color:#2a7a4a;font-weight:700;flex-shrink:0}
+  .pricing-card.featured .pf-check{color:var(--gold)}
+  /* ============ SUCCESS STORIES ============ */
+  .stories-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .story-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(10,22,40,.08);transition:var(--transition)}
+  .story-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+  .story-top{background:linear-gradient(135deg,var(--navy),var(--blue));padding:28px;color:white;text-align:center}
+  .story-avatar{width:70px;height:70px;border-radius:50%;background:rgba(200,168,75,.2);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}
+  .story-name{font-family:var(--font-display);font-size:18px;color:white;margin-bottom:4px}
+  .story-current-rank{font-size:12px;color:var(--gold);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+  .story-body{padding:24px}
+  .story-journey{display:flex;align-items:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .journey-step{font-size:12px;font-weight:600;padding:4px 10px;border-radius:12px;background:var(--light-bg);color:var(--navy)}
+  .journey-arrow{font-size:14px;color:var(--gold)}
+  .story-quote{font-size:14px;color:#5a6a7a;font-style:italic;line-height:1.6;border-left:3px solid var(--gold);padding-left:14px}
+  .story-stats{display:flex;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid #eef0f4}
+  .st-stat{text-align:center;flex:1}
+  .st-stat-num{font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--navy);display:block}
+  .st-stat-label{font-size:11px;color:var(--gray)}
+  /* ============ CAREER TRACKER ============ */
+  .tracker-timeline{position:relative;padding:10px 0}
+  .tracker-timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--gold),var(--blue));transform:translateX(-50%)}
+  .tl-item{display:flex;margin-bottom:36px;position:relative}
+  .tl-item:nth-child(odd){flex-direction:row}
+  .tl-item:nth-child(even){flex-direction:row-reverse}
+  .tl-content{width:calc(50% - 40px);background:white;border-radius:12px;padding:26px;box-shadow:0 4px 20px rgba(10,22,40,.08);border:1px solid rgba(10,22,40,.06);transition:var(--transition)}
+  .tl-content:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+  .tl-item:nth-child(odd) .tl-content{margin-right:auto}
+  .tl-item:nth-child(even) .tl-content{margin-left:auto}
+  .tl-dot{position:absolute;left:50%;top:26px;width:20px;height:20px;border-radius:50%;background:var(--gold);border:3px solid white;box-shadow:0 0 0 4px rgba(200,168,75,.3);transform:translateX(-50%);z-index:1}
+  .tl-stage{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .stage-sea{color:#1a4a8a}
+  .stage-home{color:#2a7a4a}
+  .stage-promo{color:#c8a84b}
+  .tl-content h4{font-family:var(--font-display);font-size:18px;margin-bottom:8px;color:var(--navy)}
+  .tl-content p{font-size:13px;color:#5a6a7a;margin-bottom:12px}
+  .tl-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tl-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;background:var(--light-bg);color:#3a4a5a}
+  /* ============ REVENUE MODEL ============ */
+  .revenue-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .rev-card{background:white;border-radius:12px;padding:28px;box-shadow:0 3px 16px rgba(10,22,40,.07);border:1px solid rgba(10,22,40,.06);border-top:4px solid var(--gold);transition:var(--transition)}
+  .rev-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .rev-icon{font-size:32px;margin-bottom:14px}
+  .rev-card h4{font-family:var(--font-display);font-size:18px;margin-bottom:8px;color:var(--navy)}
+  .rev-card p{font-size:13px;color:#5a6a7a;line-height:1.6}
+  .rev-tag{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;background:#fef3cd;color:#8a6d00}
+  /* ============ FOOTER ============ */
+  .footer{background:#060e1a;color:rgba(248,246,240,.7);padding:70px 0 0}
+  .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:48px;padding-bottom:50px}
+  .footer-logo{font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--gold);margin-bottom:14px}
+  .footer-col p{font-size:14px;line-height:1.7}
+  .footer-col h4{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+  .footer-col ul li{margin-bottom:10px}
+  .footer-col ul li a{font-size:14px;color:rgba(248,246,240,.6);transition:var(--transition)}
+  .footer-col ul li a:hover{color:var(--gold)}
+  .footer-bottom{border-top:1px solid rgba(200,168,75,.1);padding:20px 24px;text-align:center;font-size:13px;color:rgba(248,246,240,.35);max-width:1180px;margin:0 auto}
+  /* ============ FORMS ============ */
+  .form-group{margin-bottom:20px}
+  .form-group label{display:block;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--navy);margin-bottom:6px;text-transform:uppercase}
+  .form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 15px;border:1.5px solid #d8dde6;border-radius:var(--radius);font-family:var(--font-body);font-size:14px;color:var(--navy);background:white;transition:var(--transition);outline:none}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,74,138,.1)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-submit{width:100%;padding:14px;background:var(--navy);color:var(--gold);border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;transition:var(--transition)}
+  .form-submit:hover{background:var(--blue)}
+  /* ============ CTA SECTION ============ */
+  .cta-section{background:linear-gradient(135deg,var(--blue),var(--navy));padding:90px 0;text-align:center;position:relative;overflow:hidden}
+  .cta-section::before{content:'⚓';position:absolute;font-size:300px;opacity:.04;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+  .cta-section h2{font-family:var(--font-display);font-size:clamp(28px,4vw,44px);color:var(--white);margin-bottom:16px}
+  .cta-section p{color:var(--gray);max-width:560px;margin:0 auto 32px;font-size:17px}
+  /* ============ ANIMATIONS ============ */
+  .fade-in{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+  .fade-in.visible{opacity:1;transform:translateY(0)}
+  /* ============ RESPONSIVE ============ */
+  @media(max-width:1024px){.job-cats-grid{grid-template-columns:repeat(2,1fr)}.talent-grid{grid-template-columns:1fr 1fr}.employer-features{grid-template-columns:1fr 1fr}.pricing-grid{grid-template-columns:1fr}.stories-grid{grid-template-columns:1fr 1fr}.revenue-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr 1fr;gap:36px}}
+  @media(max-width:768px){.hamburger{display:flex}.nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:20px;gap:4px;border-bottom:1px solid rgba(200,168,75,.2)}.nav-links.open{display:flex}.nav-links li a{display:block;padding:12px 16px;font-size:15px}.program-banner-inner{grid-template-columns:1fr}.pb-stats{flex-direction:row;flex-wrap:wrap}.talent-grid{grid-template-columns:1fr}.for-cadets-grid{grid-template-columns:1fr}.employer-features{grid-template-columns:1fr}.stories-grid{grid-template-columns:1fr}.revenue-grid{grid-template-columns:1fr}.tracker-timeline::before{left:16px}.tl-item,.tl-item:nth-child(even){flex-direction:column}.tl-content,.tl-item:nth-child(even) .tl-content,.tl-item:nth-child(odd) .tl-content{width:100%;margin:0 0 0 44px}.tl-dot{left:16px}.footer-grid{grid-template-columns:1fr;gap:32px}.form-row{grid-template-columns:1fr}}
+  @media(max-width:480px){.job-cats-grid{grid-template-columns:1fr 1fr}.pricing-grid{grid-template-columns:1fr}.stories-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">⚓</span>
+      <div class="logo-text"><span class="logo-main">ECA</span><span class="logo-sub">Ethiopian Cadet Association</span></div>
+    </a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="training.html">Training & Courses</a></li>
+      <li><a href="employment.html" class="active">Employment</a></li>
+      <li><a href="jobs.html">Job Board</a></li>
+      <li><a href="news.html">News & Events</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-cta">Join Us</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-tag">Career Continuity Program</span>
+    <h1>Between-Contract Employment Program</h1>
+    <p>Helping Ethiopian maritime cadets earn income, maintain skills, and build careers while waiting for their next ship contract.</p>
+  </div>
+</section>
+
+<section style="padding:80px 0">
+  <div class="container">
+
+    <!-- MAIN TABS -->
+    <div class="main-tabs">
+      <button class="main-tab active" onclick="switchTab('opportunities',this)">💼 Opportunities</button>
+      <button class="main-tab" onclick="switchTab('talent',this)">👥 Talent Pool</button>
+      <button class="main-tab" onclick="switchTab('cadets',this)">⚓ For Cadets</button>
+      <button class="main-tab" onclick="switchTab('employers',this)">🏢 For Employers</button>
+      <button class="main-tab" onclick="switchTab('stories',this)">⭐ Success Stories</button>
+      <button class="main-tab" onclick="switchTab('tracker',this)">📈 Career Journey</button>
+    </div>
+
+    <!-- ======== TAB: OPPORTUNITIES ======== -->
+    <div class="tab-panel active" id="opportunities">
+
+      <div class="program-banner fade-in">
+        <div class="program-banner-inner">
+          <div>
+            <div class="pb-tag">🇪🇹 Ethiopia's First Maritime Employment Bridge</div>
+            <h2>Work in Ethiopia. Return to Sea Stronger.</h2>
+            <p>When your ship contract ends and you come home to Ethiopia, don't let the gap slow you down. ECA connects you with Ethiopian companies that need your technical skills — for 1 to 6 months — until your next contract begins.</p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <a href="register.html" class="btn btn-primary">Find Work Now</a>
+              <a href="#" onclick="switchTab('employers',document.querySelectorAll('.main-tab')[3]);return false;" class="btn btn-outline">Post a Vacancy</a>
+            </div>
+          </div>
+          <div class="pb-stats">
+            <div class="pb-stat"><span class="pb-stat-num">240+</span><span class="pb-stat-label">Active Jobs</span></div>
+            <div class="pb-stat"><span class="pb-stat-num">85+</span><span class="pb-stat-label">Employers</span></div>
+            <div class="pb-stat"><span class="pb-stat-num">1,200+</span><span class="pb-stat-label">Placements</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Job Category Grid -->
+      <span class="section-tag">Available Job Types</span>
+      <h2 style="font-family:var(--font-display);font-size:34px;margin-bottom:8px;">Browse by Category</h2>
+      <p style="color:#5a6a7a;margin-bottom:32px;">All roles are short-term contracts designed for maritime professionals on their home leave.</p>
+
+      <div class="job-cats-grid fade-in">
+        <div class="jcat-card">
+          <span class="jcat-icon">🔧</span>
+          <h4>Mechanical Technician</h4>
+          <p>Diesel engines, pumps, heavy equipment maintenance</p>
+          <span class="jcat-count">48 open roles</span>
+        </div>
+        <div class="jcat-card">
+          <span class="jcat-icon">⚡</span>
+          <h4>Electrical Technician</h4>
+          <p>Industrial electrical systems, panels, generators</p>
+          <span class="jcat-count">35 open roles</span>
+        </div>
+        <div class="jcat-card">
+          <span class="jcat-icon">🛠️</span>
+          <h4>Maintenance Assistant</h4>
+          <p>Planned maintenance, inspections, reporting</p>
+          <span class="jcat-count">52 open roles</span>
+        </div>
+        <div class="jcat-card">
+          <span class="jcat-icon">🏭</span>
+          <h4>Workshop Technician</h4>
+          <p>Fabrication, machining, repair workshops</p>
+          <span class="jcat-count">29 open roles</span>
+        </div>
+        <div class="jcat-card">
+          <span class="jcat-icon">⚙️</span>
+          <h4>Fabrication Assistant</h4>
+          <p>Metal work, welding, structural fabrication</p>
+          <span class="jcat-count">22 open roles</span>
+        </div>
+        <div class="jcat-card">
+          <span class="jcat-icon">🚛</span>
+          <h4>Logistics Assistant</h4>
+          <p>Fleet maintenance, transport coordination</p>
+          <span class="jcat-count">31 open roles</span>
+        </div>
+        <div class="jcat-card">
+          <span class="jcat-icon">🦺</span>
+          <h4>Safety Assistant</h4>
+          <p>HSE compliance, safety inspections, training</p>
+          <span class="jcat-count">18 open roles</span>
+        </div>
+        <div class="jcat-card" style="border:2px dashed #c0cad8;background:var(--light-bg)">
+          <span class="jcat-icon">➕</span>
+          <h4>More Coming</h4>
+          <p>New categories added as employers join the platform</p>
+          <span class="jcat-count" style="background:var(--navy);color:var(--gold)">Suggest a Category</span>
+        </div>
+      </div>
+
+      <!-- Live Job Listings -->
+      <span class="section-tag" style="margin-top:50px;display:block">Live Listings</span>
+      <h2 style="font-family:var(--font-display);font-size:34px;margin-bottom:28px;">Open Vacancies</h2>
+
+      <div style="display:flex;flex-direction:column;gap:16px" class="fade-in">
+
+        <div style="background:white;border-radius:12px;padding:26px 30px;box-shadow:0 3px 16px rgba(10,22,40,.07);display:flex;align-items:center;gap:20px;border:1px solid rgba(10,22,40,.06);transition:var(--transition)" onmouseover="this.style.transform='translateX(4px)';this.style.borderLeft='4px solid var(--gold)'" onmouseout="this.style.transform='';this.style.borderLeft=''">
+          <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🏭</div>
+          <div style="flex:1">
+            <div style="font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:4px">Mechanical Technician</div>
+            <div style="font-size:13px;color:#5a6a7a;margin-bottom:8px">Ethio Engineering Group · Addis Ababa</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e8f4fd;color:#1a4a8a">Engineering</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#fef9e7;color:#8a6d00">3–5 Months</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e8f8f0;color:#155724">On-Site</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#fdf0f0;color:#7a2a2a">25,000–35,000 ETB/mo</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:12px;color:var(--gray);margin-bottom:8px">Posted 2 days ago</div>
+            <a href="register.html" style="padding:9px 20px;background:var(--navy);color:var(--gold);border-radius:6px;font-size:13px;font-weight:700">Apply</a>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:12px;padding:26px 30px;box-shadow:0 3px 16px rgba(10,22,40,.07);display:flex;align-items:center;gap:20px;border:1px solid rgba(10,22,40,.06);transition:var(--transition)" onmouseover="this.style.transform='translateX(4px)';this.style.borderLeft='4px solid var(--gold)'" onmouseout="this.style.transform='';this.style.borderLeft=''">
+          <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">⚡</div>
+          <div style="flex:1">
+            <div style="font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:4px">Electrical Technician — Industrial Plant</div>
+            <div style="font-size:13px;color:#5a6a7a;margin-bottom:8px">Midroc Ethiopia · Multiple Locations</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e8f4fd;color:#1a4a8a">Electrical</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#fef9e7;color:#8a6d00">2–4 Months</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e8f8f0;color:#155724">Field-Based</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#fdf0f0;color:#7a2a2a">28,000–40,000 ETB/mo</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:12px;color:var(--gray);margin-bottom:8px">Posted 4 days ago</div>
+            <a href="register.html" style="padding:9px 20px;background:var(--navy);color:var(--gold);border-radius:6px;font-size:13px;font-weight:700">Apply</a>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:12px;padding:26px 30px;box-shadow:0 3px 16px rgba(10,22,40,.07);display:flex;align-items:center;gap:20px;border:1px solid rgba(10,22,40,.06);transition:var(--transition)" onmouseover="this.style.transform='translateX(4px)';this.style.borderLeft='4px solid var(--gold)'" onmouseout="this.style.transform='';this.style.borderLeft=''">
+          <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🦺</div>
+          <div style="flex:1">
+            <div style="font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:4px">HSE Safety Officer (Short Term)</div>
+            <div style="font-size:13px;color:#5a6a7a;margin-bottom:8px">Ethiopian Cement Corp. · Mugher</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e8f4fd;color:#1a4a8a">Safety</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#fef9e7;color:#8a6d00">3 Months</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e8f8f0;color:#155724">On-Site</span>
+              <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#fdf0f0;color:#7a2a2a">22,000–30,000 ETB/mo</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:12px;color:var(--gray);margin-bottom:8px">Posted 1 week ago</div>
+            <a href="register.html" style="padding:9px 20px;background:var(--navy);color:var(--gold);border-radius:6px;font-size:13px;font-weight:700">Apply</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="text-align:center;margin-top:32px">
+        <a href="register.html" class="btn btn-primary btn-lg">Create Profile to See All 240+ Jobs</a>
+      </div>
+
+    </div><!-- /opportunities -->
+
+    <!-- ======== TAB: TALENT POOL ======== -->
+    <div class="tab-panel" id="talent">
+      <div class="talent-pool-header fade-in">
+        <h3>Maritime Talent Pool</h3>
+        <p>A searchable database of Ethiopian maritime professionals — cadets, officers, ratings, and specialists. Filter by rank, availability, and skills. Find the right person in minutes.</p>
+        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+          <span style="background:rgba(255,255,255,.08);border:1px solid rgba(200,168,75,.2);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(248,246,240,.8)">🟢 Available Now: 142</span>
+          <span style="background:rgba(255,255,255,.08);border:1px solid rgba(200,168,75,.2);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(248,246,240,.8)">🟡 Waiting for Contract: 89</span>
+          <span style="background:rgba(255,255,255,.08);border:1px solid rgba(200,168,75,.2);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(248,246,240,.8)">🔵 Onboard: 318</span>
+        </div>
+      </div>
+
+      <div class="search-bar fade-in">
+        <input type="text" placeholder="🔍  Search by name, rank, or skill..."/>
+        <select><option>All Ranks</option><option>Cadet</option><option>4th Engineer</option><option>3rd Engineer</option><option>2nd Engineer</option><option>Chief Engineer</option><option>ETO</option><option>Rating</option></select>
+        <select><option>All Status</option><option>🟢 Available Now</option><option>🟡 Waiting for Contract</option><option>🔵 Onboard</option></select>
+        <select><option>All Experience</option><option>0–2 years</option><option>2–5 years</option><option>5–10 years</option><option>10+ years</option></select>
+        <a href="register.html" class="btn btn-primary">Search Talent</a>
+      </div>
+
+      <div class="talent-grid fade-in">
+
+        <div class="talent-card">
+          <div class="talent-header">
+            <div class="talent-avatar">👨‍🔧</div>
+            <div>
+              <div class="talent-name">Dawit Tesfaye</div>
+              <div class="talent-rank">3rd Engineer · 6 yrs sea service</div>
+              <span class="status-badge status-available">🟢 Available Now</span>
+            </div>
+          </div>
+          <div class="talent-details">
+            <div class="td-item"><strong>Vessel:</strong>Bulk Carrier, Container</div>
+            <div class="td-item"><strong>Location:</strong>Addis Ababa</div>
+            <div class="td-item"><strong>Available:</strong>Until Sep 2025</div>
+          </div>
+          <div class="talent-skills">
+            <span class="skill-tag">Main Engine</span>
+            <span class="skill-tag">Aux Machinery</span>
+            <span class="skill-tag">Welding</span>
+            <span class="skill-tag">STCW III/1</span>
+          </div>
+          <div class="talent-footer">
+            <a href="register.html" class="contact-talent">Contact</a>
+            <span class="premium-badge">⭐ Verified</span>
+          </div>
+        </div>
+
+        <div class="talent-card">
+          <div class="talent-header">
+            <div class="talent-avatar">👩‍🔧</div>
+            <div>
+              <div class="talent-name">Meron Haile</div>
+              <div class="talent-rank">Electro-Technical Officer · 4 yrs</div>
+              <span class="status-badge status-available">🟢 Available Now</span>
+            </div>
+          </div>
+          <div class="talent-details">
+            <div class="td-item"><strong>Vessel:</strong>Gas Carrier, Tanker</div>
+            <div class="td-item"><strong>Location:</strong>Dire Dawa</div>
+            <div class="td-item"><strong>Available:</strong>Until Aug 2025</div>
+          </div>
+          <div class="talent-skills">
+            <span class="skill-tag">PLC Systems</span>
+            <span class="skill-tag">Automation</span>
+            <span class="skill-tag">Switchboards</span>
+            <span class="skill-tag">GMDSS</span>
+          </div>
+          <div class="talent-footer">
+            <a href="register.html" class="contact-talent">Contact</a>
+            <span class="premium-badge">⭐ Premium</span>
+          </div>
+        </div>
+
+        <div class="talent-card">
+          <div class="talent-header">
+            <div class="talent-avatar">👨‍💼</div>
+            <div>
+              <div class="talent-name">Solomon Bekele</div>
+              <div class="talent-rank">2nd Engineer · 11 yrs sea service</div>
+              <span class="status-badge status-waiting">🟡 Waiting for Contract</span>
+            </div>
+          </div>
+          <div class="talent-details">
+            <div class="td-item"><strong>Vessel:</strong>Tanker, VLCC</div>
+            <div class="td-item"><strong>Location:</strong>Addis Ababa</div>
+            <div class="td-item"><strong>Available:</strong>Immediate</div>
+          </div>
+          <div class="talent-skills">
+            <span class="skill-tag">Cargo Systems</span>
+            <span class="skill-tag">IGF Code</span>
+            <span class="skill-tag">ERM</span>
+            <span class="skill-tag">STCW III/2</span>
+          </div>
+          <div class="talent-footer">
+            <a href="register.html" class="contact-talent">Contact</a>
+            <span class="premium-badge">⭐ Verified</span>
+          </div>
+        </div>
+
+        <div class="talent-card">
+          <div class="talent-header">
+            <div class="talent-avatar">🧑‍🔬</div>
+            <div>
+              <div class="talent-name">Abiy Girma</div>
+              <div class="talent-rank">4th Engineer · 2 yrs sea service</div>
+              <span class="status-badge status-available">🟢 Available Now</span>
+            </div>
+          </div>
+          <div class="talent-details">
+            <div class="td-item"><strong>Vessel:</strong>General Cargo</div>
+            <div class="td-item"><strong>Location:</strong>Hawassa</div>
+            <div class="td-item"><strong>Available:</strong>Until Oct 2025</div>
+          </div>
+          <div class="talent-skills">
+            <span class="skill-tag">Watchkeeping</span>
+            <span class="skill-tag">Maintenance</span>
+            <span class="skill-tag">BST</span>
+          </div>
+          <div class="talent-footer">
+            <a href="register.html" class="contact-talent">Contact</a>
+            <span class="premium-badge" style="color:var(--gray)">Standard</span>
+          </div>
+        </div>
+
+        <div class="talent-card">
+          <div class="talent-header">
+            <div class="talent-avatar">👨‍🚀</div>
+            <div>
+              <div class="talent-name">Yonas Alemu</div>
+              <div class="talent-rank">Chief Engineer · 18 yrs sea service</div>
+              <span class="status-badge status-onboard">🔵 Currently Onboard</span>
+            </div>
+          </div>
+          <div class="talent-details">
+            <div class="td-item"><strong>Vessel:</strong>Container Ship</div>
+            <div class="td-item"><strong>Location:</strong>At Sea</div>
+            <div class="td-item"><strong>Available:</strong>From Dec 2025</div>
+          </div>
+          <div class="talent-skills">
+            <span class="skill-tag">Chief Eng. COC</span>
+            <span class="skill-tag">Team Management</span>
+            <span class="skill-tag">Superintendent</span>
+          </div>
+          <div class="talent-footer">
+            <a href="register.html" class="contact-talent">Schedule</a>
+            <span class="premium-badge">⭐ Premium</span>
+          </div>
+        </div>
+
+        <div class="talent-card" style="border:2px dashed #c0cad8;background:var(--light-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;min-height:280px">
+          <div style="font-size:48px;margin-bottom:14px">👤</div>
+          <h4 style="font-family:var(--font-display);font-size:18px;margin-bottom:8px">Add Your Profile</h4>
+          <p style="font-size:13px;color:#6a7a8a;margin-bottom:16px">Create a free profile and get discovered by Ethiopian employers during your home leave.</p>
+          <a href="register.html" class="btn btn-primary" style="padding:10px 22px;font-size:14px">Join the Talent Pool</a>
+        </div>
+
+      </div>
+    </div><!-- /talent -->
+
+    <!-- ======== TAB: FOR CADETS ======== -->
+    <div class="tab-panel" id="cadets">
+      <div class="for-cadets-grid fade-in">
+        <div>
+          <span class="section-tag">Step by Step</span>
+          <h2 style="font-family:var(--font-display);font-size:32px;margin-bottom:24px;">How to Get Work in Ethiopia</h2>
+          <div class="steps-list">
+            <div class="step-item"><div class="step-circle">1</div><div class="step-body"><h4>Create Your ECA Profile</h4><p>Register as a cadet member. Add your rank, sea service history, vessel types, and certificates. Takes 5 minutes.</p></div></div>
+            <div class="step-item"><div class="step-circle">2</div><div class="step-body"><h4>Upload Your Maritime CV</h4><p>Upload your updated CV and key documents — COC, STCW certificates, seaman's book, discharge book summary.</p></div></div>
+            <div class="step-item"><div class="step-circle">3</div><div class="step-body"><h4>Set Your Availability Window</h4><p>Tell employers exactly when you are home in Ethiopia and when you need to return to sea. Be specific — it gets you matched faster.</p></div></div>
+            <div class="step-item"><div class="step-circle">4</div><div class="step-body"><h4>Browse & Apply for Jobs</h4><p>Filter roles by category, duration, and location. Apply directly through ECA — no agent fees, no middlemen.</p></div></div>
+            <div class="step-item"><div class="step-circle">5</div><div class="step-body"><h4>Work, Earn & Return to Sea</h4><p>Complete your contract, add it to your Career Tracker, then return to your ship career — stronger and with extra income.</p></div></div>
+          </div>
+          <div style="margin-top:32px"><a href="register.html" class="btn btn-primary btn-lg">Create My Profile Now</a></div>
+        </div>
+        <div class="cadet-benefits">
+          <h3>Why This Changes Everything</h3>
+          <div class="benefit-row"><div class="benefit-row-icon">💰</div><div class="benefit-row-text"><h5>No Income Gap</h5><p>Earn 20,000–40,000 ETB/month during your contract break instead of waiting with no income.</p></div></div>
+          <div class="benefit-row"><div class="benefit-row-icon">🔧</div><div class="benefit-row-text"><h5>Keep Your Skills Sharp</h5><p>Technical work on land keeps your engineering skills active and your hands busy between contracts.</p></div></div>
+          <div class="benefit-row"><div class="benefit-row-icon">📄</div><div class="benefit-row-text"><h5>Build Your CV</h5><p>Land-based engineering experience adds depth to your maritime CV and impresses ship managers.</p></div></div>
+          <div class="benefit-row"><div class="benefit-row-icon">🤝</div><div class="benefit-row-text"><h5>Build Ethiopian Networks</h5><p>Connect with Ethiopian companies, build relationships, and create a safety net for your future career.</p></div></div>
+          <div class="benefit-row"><div class="benefit-row-icon">🎓</div><div class="benefit-row-text"><h5>Free Time for Courses</h5><p>Short contracts leave time for ECA online courses and certificate upgrades before your next voyage.</p></div></div>
+          <div class="benefit-row"><div class="benefit-row-icon">📈</div><div class="benefit-row-text"><h5>Tracked on Your Career Profile</h5><p>Every land job you do is logged in your ECA Career Tracker — showing a full, unbroken professional journey.</p></div></div>
+        </div>
+      </div>
+    </div><!-- /cadets -->
+
+    <!-- ======== TAB: FOR EMPLOYERS ======== -->
+    <div class="tab-panel" id="employers">
+      <div class="employer-hero fade-in">
+        <div>
+          <h3>Access Ethiopia's Most Skilled Technical Workforce</h3>
+          <p>Ethiopian maritime professionals are internationally trained, safety-certified, and highly disciplined engineers. Hire them for short-term contracts and get world-class technical talent for your business.</p>
+        </div>
+        <div class="employer-actions">
+          <a href="register.html?role=company" class="btn btn-primary">Post a Vacancy</a>
+          <a href="#" onclick="switchTab('talent',document.querySelectorAll('.main-tab')[1]);return false;" class="btn btn-outline">Browse Talent Pool</a>
+        </div>
+      </div>
+
+      <div class="employer-features fade-in">
+        <div class="ef-card"><div class="ef-icon">🔍</div><h4>Search the Talent Pool</h4><p>Filter by rank, skills, availability, and location. Find the exact professional you need in minutes — with full certification details visible.</p></div>
+        <div class="ef-card"><div class="ef-icon">📋</div><h4>Post Job Vacancies</h4><p>Post your short-term vacancy in under 3 minutes. Reach 1,000+ qualified maritime professionals who are currently in Ethiopia and available to work.</p></div>
+        <div class="ef-card"><div class="ef-icon">✅</div><h4>Verified Credentials</h4><p>Every ECA member profile includes verified certificates, sea service records, and references. Hire with confidence — qualifications are genuine.</p></div>
+        <div class="ef-card"><div class="ef-icon">⚡</div><h4>Fast Matching</h4><p>Our system instantly matches your vacancy requirements to available candidates. Receive shortlisted applicants within 24 hours of posting.</p></div>
+        <div class="ef-card"><div class="ef-icon">📊</div><h4>Workforce Reports</h4><p>Premium employers receive monthly reports on talent availability by rank and location — plan your hiring before your project starts.</p></div>
+        <div class="ef-card"><div class="ef-icon">🤝</div><h4>Direct Communication</h4><p>Message candidates directly through the ECA platform. Schedule interviews, make offers, and manage contracts — all in one place.</p></div>
+      </div>
+
+      <!-- Pricing -->
+      <span class="section-tag" style="margin-top:20px;display:block">Employer Plans</span>
+      <h2 style="font-family:var(--font-display);font-size:34px;margin-bottom:8px;">Simple, Transparent Pricing</h2>
+      <p style="color:#5a6a7a;margin-bottom:36px;">Choose the plan that fits your hiring needs. No hidden fees.</p>
+
+      <div class="pricing-grid fade-in">
+        <div class="pricing-card">
+          <div class="pricing-tier">Starter</div>
+          <div class="pricing-price">Free</div>
+          <div class="pricing-period">Always free</div>
+          <div class="pricing-features">
+            <div class="pf-item"><span class="pf-check">✓</span>Post 1 vacancy per month</div>
+            <div class="pf-item"><span class="pf-check">✓</span>View 10 candidate profiles</div>
+            <div class="pf-item"><span class="pf-check">✓</span>Basic candidate search</div>
+            <div class="pf-item"><span class="pf-check" style="color:#ccc">✗</span>Direct messaging</div>
+            <div class="pf-item"><span class="pf-check" style="color:#ccc">✗</span>Certificate verification</div>
+          </div>
+          <a href="register.html?role=company" class="btn btn-outline-dark" style="width:100%;text-align:center;display:block">Get Started Free</a>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pricing-popular">Most Popular</div>
+          <div class="pricing-tier">Professional</div>
+          <div class="pricing-price">4,500 <span style="font-size:18px">ETB</span></div>
+          <div class="pricing-period">per month</div>
+          <div class="pricing-features">
+            <div class="pf-item"><span class="pf-check">✓</span>Unlimited job postings</div>
+            <div class="pf-item"><span class="pf-check">✓</span>Full talent pool access</div>
+            <div class="pf-item"><span class="pf-check">✓</span>Direct messaging</div>
+            <div class="pf-item"><span class="pf-check">✓</span>Certificate verification</div>
+            <div class="pf-item"><span class="pf-check">✓</span>Priority placement</div>
+          </div>
+          <a href="register.html?role=company" class="btn btn-primary" style="width:100%;text-align:center;display:block">Start Free Trial</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-tier">Enterprise</div>
+          <div class="pricing-price">Custom</div>
+          <div class="pricing-period">Contact us</div>
+          <div class="pricing-features">
+            <div class="pf-item"><span class="pf-check">✓</span>Everything in Professional</div>
+            <div class="pf-item"><span class="pf-check">✓</span>Dedicated account manager</div>
+            <div class="pf-item"><span class="pf-check">✓</span>Monthly talent reports</div>
+            <div class="pf-item"><span class="pf-check">✓</span>Bulk hiring support</div>
+            <div class="pf-item"><span class="pf-check">✓</span>ECA branding partnership</div>
+          </div>
+          <a href="contact.html" class="btn btn-outline-dark" style="width:100%;text-align:center;display:block">Contact Us</a>
+        </div>
+      </div>
+    </div><!-- /employers -->
+
+    <!-- ======== TAB: SUCCESS STORIES ======== -->
+    <div class="tab-panel" id="stories">
+      <span class="section-tag">Real People. Real Results.</span>
+      <h2 style="font-family:var(--font-display);font-size:36px;margin-bottom:10px;">Success Stories</h2>
+      <p style="color:#5a6a7a;margin-bottom:40px;">Cadets who used ECA's Employment Program between contracts — and came back stronger.</p>
+
+      <div class="stories-grid fade-in">
+        <div class="story-card">
+          <div class="story-top">
+            <div class="story-avatar">👨‍✈️</div>
+            <div class="story-name">Bereket Alemu</div>
+            <div class="story-current-rank">Now: 2nd Engineer · Container Vessel</div>
+          </div>
+          <div class="story-body">
+            <div class="story-journey">
+              <span class="journey-step">3rd Eng.</span>
+              <span class="journey-arrow">→</span>
+              <span class="journey-step">ECA Job (4 months)</span>
+              <span class="journey-arrow">→</span>
+              <span class="journey-step">Promoted to 2nd</span>
+            </div>
+            <div class="story-quote">"During my break I worked as a mechanical technician at Midroc. The income was good and it kept my technical thinking sharp. When I returned to sea I was more confident than ever — and I got my 2nd Engineer promotion within 6 months."</div>
+            <div class="story-stats">
+              <div class="st-stat"><span class="st-stat-num">4</span><span class="st-stat-label">Months at land job</span></div>
+              <div class="st-stat"><span class="st-stat-num">32k</span><span class="st-stat-label">ETB earned/month</span></div>
+              <div class="st-stat"><span class="st-stat-num">6</span><span class="st-stat-label">Months to promotion</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-top">
+            <div class="story-avatar">👩‍🔧</div>
+            <div class="story-name">Tigist Woldemariam</div>
+            <div class="story-current-rank">Now: ETO · LNG Carrier</div>
+          </div>
+          <div class="story-body">
+            <div class="story-journey">
+              <span class="journey-step">ETO</span>
+              <span class="journey-arrow">→</span>
+              <span class="journey-step">ECA Job (3 months)</span>
+              <span class="journey-arrow">→</span>
+              <span class="journey-step">LNG Contract</span>
+            </div>
+            <div class="story-quote">"I worked as an electrical technician in Addis Ababa for 3 months. Not only did I earn well but I also finished my IGF Code certification during that time. The ECA job gave me the financial breathing room to invest in my certification."</div>
+            <div class="story-stats">
+              <div class="st-stat"><span class="st-stat-num">3</span><span class="st-stat-label">Months at land job</span></div>
+              <div class="st-stat"><span class="st-stat-num">IGF</span><span class="st-stat-label">Cert earned</span></div>
+              <div class="st-stat"><span class="st-stat-num">+40%</span><span class="st-stat-label">Salary increase</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-top">
+            <div class="story-avatar">🧑‍💼</div>
+            <div class="story-name">Girma Tadesse</div>
+            <div class="story-current-rank">Now: Chief Engineer · Bulk Carrier</div>
+          </div>
+          <div class="story-body">
+            <div class="story-journey">
+              <span class="journey-step">2nd Eng.</span>
+              <span class="journey-arrow">→</span>
+              <span class="journey-step">ECA Job (5 months)</span>
+              <span class="journey-arrow">→</span>
+              <span class="journey-step">Chief Engineer</span>
+            </div>
+            <div class="story-quote">"I used my break to work as a workshop supervisor, which gave me real experience managing a team of technicians. When I sat for my Chief Engineer exam, the leadership experience helped me pass the practical assessment. ECA changed my trajectory."</div>
+            <div class="story-stats">
+              <div class="st-stat"><span class="st-stat-num">5</span><span class="st-stat-label">Months at land job</span></div>
+              <div class="st-stat"><span class="st-stat-num">Chief</span><span class="st-stat-label">Rank achieved</span></div>
+              <div class="st-stat"><span class="st-stat-num">1st</span><span class="st-stat-label">Attempt on exam</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--navy);border-radius:14px;padding:40px;text-align:center;margin-top:48px" class="fade-in">
+        <h3 style="font-family:var(--font-display);font-size:28px;color:var(--gold);margin-bottom:10px">Share Your Story</h3>
+        <p style="color:var(--gray);max-width:500px;margin:0 auto 24px">Have you used ECA's Employment Program? Inspire other cadets by sharing your experience.</p>
+        <a href="contact.html" class="btn btn-primary">Submit Your Story</a>
+      </div>
+    </div><!-- /stories -->
+
+    <!-- ======== TAB: CAREER JOURNEY ======== -->
+    <div class="tab-panel" id="tracker">
+      <div style="background:linear-gradient(135deg,var(--navy),#0d3060);border-radius:14px;padding:44px;color:white;margin-bottom:48px;position:relative;overflow:hidden" class="fade-in">
+        <div style="position:relative;z-index:1">
+          <h3 style="font-family:var(--font-display);font-size:30px;color:var(--gold);margin-bottom:12px">Career Continuity Program</h3>
+          <p style="color:var(--gray);max-width:640px;font-size:15px;line-height:1.7;margin-bottom:20px">Most maritime platforms only focus on getting the next contract. ECA tracks your <strong style="color:white">entire career journey</strong> — at sea, at home in Ethiopia, promotions, certifications, and land-based experience — all in one profile that grows with you.</p>
+          <a href="register.html" class="btn btn-primary">Start Tracking My Career</a>
+        </div>
+        <div style="position:absolute;right:30px;bottom:-20px;font-size:150px;opacity:.05">📈</div>
+      </div>
+
+      <span class="section-tag">Your Full Journey</span>
+      <h2 style="font-family:var(--font-display);font-size:34px;margin-bottom:40px;">From Cadet to Chief Engineer — Every Step Tracked</h2>
+
+      <div class="tracker-timeline fade-in">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-stage stage-sea">🚢 ON BOARD — Contract 1</div>
+            <h4>Cadet / Junior Engineer</h4>
+            <p>First sea contract. Engine room training under supervision. Cadet logbook tasks, sea time accumulation, watchkeeping basics.</p>
+            <div class="tl-tags"><span class="tl-tag">Sea Service Log</span><span class="tl-tag">Cadet Logbook</span><span class="tl-tag">8–12 Months</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-stage stage-home">🇪🇹 HOME — ECA Employment Program</div>
+            <h4>Short-Term Work in Ethiopia</h4>
+            <p>Contract finished. Back in Ethiopia. Use ECA's Between-Contract Job Board to find technical work — earn income, stay skilled, build your CV.</p>
+            <div class="tl-tags"><span class="tl-tag">ECA Job Board</span><span class="tl-tag">Income Continuity</span><span class="tl-tag">1–5 Months</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-stage stage-sea">🚢 ON BOARD — Contract 2</div>
+            <h4>4th or 3rd Engineer</h4>
+            <p>Back at sea with more experience, confidence, and land-based technical skills. Taking on independent watchkeeping responsibilities.</p>
+            <div class="tl-tags"><span class="tl-tag">COC Prep</span><span class="tl-tag">Watchkeeping</span><span class="tl-tag">8–10 Months</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-stage stage-home">📜 HOME — Certification + ECA Job</div>
+            <h4>Upgrade Courses & Part-Time Work</h4>
+            <p>Use your shore leave to complete ECA online courses, sit COC upgrade exams, and earn income through a short land contract simultaneously.</p>
+            <div class="tl-tags"><span class="tl-tag">COC Exam</span><span class="tl-tag">ECA Courses</span><span class="tl-tag">STCW Renewal</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-stage stage-sea">🚢 ON BOARD — Contract 3+</div>
+            <h4>2nd Engineer — Promoted</h4>
+            <p>Promoted and managing junior engineers. Land experience in team leadership shows. Preparing Chief Engineer application.</p>
+            <div class="tl-tags"><span class="tl-tag">Management Level</span><span class="tl-tag">Chief Eng. Prep</span><span class="tl-tag">ERM Course</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--gold-light);box-shadow:0 0 0 6px rgba(200,168,75,.4)"></div>
+          <div class="tl-content" style="border:2px solid var(--gold)">
+            <div class="tl-stage stage-promo">⭐ PEAK — Chief Engineer</div>
+            <h4>Chief Engineer — Top of the Ladder</h4>
+            <p>Full responsibility for all engineering operations. The result of a continuous career journey — tracked, logged, and built step by step with ECA.</p>
+            <div class="tl-tags"><span class="tl-tag" style="background:#fef3cd;color:#8a6d00">Chief Eng. COC</span><span class="tl-tag" style="background:#fef3cd;color:#8a6d00">STCW III/2</span><span class="tl-tag" style="background:#fef3cd;color:#8a6d00">10+ Years</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue Model -->
+      <div style="margin-top:70px" class="fade-in">
+        <span class="section-tag">Sustainable Platform</span>
+        <h2 style="font-family:var(--font-display);font-size:34px;margin-bottom:8px;">How ECA Sustains This Program</h2>
+        <p style="color:#5a6a7a;margin-bottom:36px;">A sustainable revenue model that keeps the platform free for cadets while delivering value to employers and partners.</p>
+        <div class="revenue-grid">
+          <div class="rev-card"><div class="rev-icon">🏢</div><h4>Employer Memberships</h4><p>Companies pay a monthly subscription to access the talent pool, post vacancies, and search verified candidates.</p><span class="rev-tag">Primary Revenue</span></div>
+          <div class="rev-card"><div class="rev-icon">🤝</div><h4>Placement Fees</h4><p>A small success fee when a cadet is successfully placed with an employer through the ECA platform.</p><span class="rev-tag">Secondary Revenue</span></div>
+          <div class="rev-card"><div class="rev-icon">📢</div><h4>Training Advertisements</h4><p>Maritime training providers and academies advertise their courses to ECA's engaged audience of cadets and officers.</p><span class="rev-tag">Partnership Revenue</span></div>
+          <div class="rev-card"><div class="rev-icon">✅</div><h4>Certificate Verification</h4><p>Employers pay a per-check fee to instantly verify the authenticity of candidates' maritime certificates and sea service.</p><span class="rev-tag">Transaction Revenue</span></div>
+          <div class="rev-card"><div class="rev-icon">⭐</div><h4>Premium Cadet Profiles</h4><p>Cadets can upgrade to a Premium profile for higher search ranking, featured placement, and verified profile badges.</p><span class="rev-tag">Freemium Revenue</span></div>
+          <div class="rev-card"><div class="rev-icon">🎓</div><h4>Course Marketplace</h4><p>Senior experts earn revenue from paid online courses. ECA takes a platform commission. Win-win for instructors and cadets.</p><span class="rev-tag">Marketplace Revenue</span></div>
+        </div>
+      </div>
+
+    </div><!-- /tracker -->
+
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <h2>Join the Career Continuity Program</h2>
+    <p>Whether you are a cadet looking for work or a company looking for talent — ECA connects Ethiopia's maritime workforce.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <a href="register.html" class="btn btn-primary btn-lg">Join as a Cadet</a>
+      <a href="register.html?role=company" class="btn btn-outline btn-lg">Register as Employer</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-col"><div class="footer-logo">⚓ ECA</div><p>Ethiopian Cadet Association — Maritime Excellence.</p></div>
+      <li><a href="jobs.html">Job Board</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="news.html">News & Events</a></li><li><a href="news.html">News & Events</a></li><li><a href="contact.html">Contact</a></li><li><a href="register.html">Membership</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><p>📧 info@ethiopiancadet.org</p><p>📞 +251 911 000 000</p><p>📍 Addis Ababa, Ethiopia</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2025 Ethiopian Cadet Association. All rights reserved.</p></div>
+</footer>
+
+<script>
+// Navbar
+const nb=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{nb.style.boxShadow=window.scrollY>50?'0 4px 30px rgba(0,0,0,.3)':'none'});
+const hb=document.getElementById('hamburger');
+const nl=document.getElementById('navLinks');
+if(hb&&nl){hb.addEventListener('click',()=>{nl.classList.toggle('open')});nl.querySelectorAll('a').forEach(l=>l.addEventListener('click',()=>nl.classList.remove('open')))}
+// Fade in
+const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target)}}),{threshold:.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+// Tab switcher
+function switchTab(id,btn){
+  document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>

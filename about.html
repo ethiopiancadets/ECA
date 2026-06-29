@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us – Ethiopian Cadet Association</title>
+  <style>/* ============================================
+   ETHIOPIAN CADET ASSOCIATION — STYLESHEET
+   ============================================ */
+
+:root {
+  --navy: #0a1628;
+  --navy-mid: #112240;
+  --blue: #1a4a8a;
+  --gold: #c8a84b;
+  --gold-light: #e8c96b;
+  --white: #f8f6f0;
+  --gray: #8a9ab5;
+  --light-bg: #f4f1ea;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Barlow', sans-serif;
+  --transition: 0.3s ease;
+  --shadow: 0 8px 32px rgba(10,22,40,0.15);
+  --radius: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--navy);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-block;
+  padding: 13px 30px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--navy);
+  border-color: var(--gold);
+}
+.btn-primary:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(200,168,75,0.35);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border-color: var(--white);
+}
+.btn-outline:hover {
+  background: var(--white);
+  color: var(--navy);
+}
+.btn-outline-dark {
+  background: transparent;
+  color: var(--navy);
+  border-color: var(--navy);
+}
+.btn-outline-dark:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+.btn-lg { padding: 16px 40px; font-size: 17px; }
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(10, 22, 40, 0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(200,168,75,0.2);
+  transition: var(--transition);
+}
+.nav-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-icon { font-size: 24px; }
+.logo-main {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+.logo-sub {
+  display: block;
+  font-size: 10px;
+  color: var(--gray);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-links li a {
+  color: rgba(248,246,240,0.8);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 5px;
+  transition: var(--transition);
+  letter-spacing: 0.3px;
+}
+.nav-links li a:hover,
+.nav-links li a.active {
+  color: var(--gold);
+}
+.nav-cta {
+  background: var(--gold) !important;
+  color: var(--navy) !important;
+  padding: 7px 18px !important;
+  border-radius: var(--radius) !important;
+  font-weight: 700 !important;
+}
+.nav-cta:hover {
+  background: var(--gold-light) !important;
+  transform: translateY(-1px);
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 68px;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(135deg, #0a1628 0%, #112240 40%, #1a3a6a 70%, #0d2040 100%);
+}
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, rgba(200,168,75,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(26,74,138,0.3) 0%, transparent 50%);
+}
+/* Subtle wave pattern */
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 300px;
+  background: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='rgba(248,246,240,0.03)' d='M0,60 C360,120 720,0 1080,60 C1260,90 1380,30 1440,60 L1440,120 L0,120 Z'/%3E%3C/svg%3E")
+    no-repeat bottom;
+  background-size: cover;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,22,40,0.4);
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 80px 24px 40px;
+}
+.hero-tag {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 8vw, 92px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.0;
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.4s forwards;
+}
+.hero-title span {
+  color: var(--gold);
+  display: block;
+}
+.hero-desc {
+  font-size: 18px;
+  color: rgba(248,246,240,0.75);
+  max-width: 580px;
+  margin-bottom: 36px;
+  font-weight: 300;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.6s forwards;
+}
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.8s forwards;
+}
+.hero-stats {
+  position: relative;
+  z-index: 2;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+  display: flex;
+  gap: 0;
+  opacity: 0;
+  animation: fadeUp 0.8s 1s forwards;
+}
+.stat {
+  flex: 1;
+  text-align: center;
+  padding: 28px 20px;
+  border-right: 1px solid rgba(200,168,75,0.2);
+  position: relative;
+}
+.stat:last-child { border-right: none; }
+.stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 30px;
+  background: var(--gold);
+  opacity: 0.4;
+}
+.stat-num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+.stat-label {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(248,246,240,0.6);
+  margin-top: 6px;
+}
+
+/* ===== QUICK LINKS ===== */
+.quick-links {
+  background: var(--navy);
+  padding: 60px 0;
+}
+.ql-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(200,168,75,0.15);
+  border: 1px solid rgba(200,168,75,0.15);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.ql-card {
+  background: var(--navy-mid);
+  padding: 36px 28px;
+  transition: var(--transition);
+  display: block;
+}
+.ql-card:hover {
+  background: var(--blue);
+  transform: translateY(-4px);
+}
+.ql-icon { font-size: 36px; margin-bottom: 14px; display: block; }
+.ql-card h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.ql-card p {
+  font-size: 14px;
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+/* ===== SECTIONS ===== */
+.section { padding: 90px 0; }
+.dark-section {
+  background: var(--navy);
+  color: var(--white);
+}
+.section-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  padding-left: 2px;
+}
+.section-tag.light { color: var(--gold-light); }
+.center-title {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.center-desc {
+  text-align: center;
+  color: var(--gray);
+  max-width: 560px;
+  margin: 0 auto 50px;
+}
+
+/* ===== ABOUT SNIPPET ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.col-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 900;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+.col-text p { color: #4a5a70; margin-bottom: 16px; font-size: 16px; }
+.visual-card {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid rgba(200,168,75,0.2);
+}
+.vc-item {
+  color: rgba(248,246,240,0.85);
+  font-size: 15px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(200,168,75,0.1);
+}
+.vc-item:last-child { border-bottom: none; }
+
+/* ===== TRAINING GRID ===== */
+.training-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.training-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(200,168,75,0.15);
+  border-radius: 10px;
+  padding: 36px 28px;
+  transition: var(--transition);
+}
+.training-card:hover {
+  background: rgba(200,168,75,0.07);
+  border-color: var(--gold);
+  transform: translateY(-4px);
+}
+.tc-num {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 900;
+  color: rgba(200,168,75,0.2);
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.training-card h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.training-card p { color: var(--gray); font-size: 14px; margin-bottom: 20px; }
+.training-card a { color: var(--gold-light); font-weight: 600; font-size: 14px; }
+
+/* ===== NEWS ===== */
+.news-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.news-card {
+  background: var(--light-bg);
+  border-radius: 10px;
+  padding: 30px;
+  border: 1px solid rgba(10,22,40,0.08);
+  transition: var(--transition);
+}
+.news-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.news-card.featured { background: var(--navy); color: var(--white); }
+.news-meta {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.news-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.news-card.featured h3 { color: var(--white); }
+.news-card p { font-size: 14px; color: #5a6a7a; line-height: 1.6; }
+.news-card.featured p { color: var(--gray); }
+.news-link { display: inline-block; margin-top: 16px; color: var(--gold); font-weight: 600; font-size: 14px; }
+.center-btn { text-align: center; }
+
+/* ===== CTA SECTION ===== */
+.cta-section {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--navy) 100%);
+  padding: 90px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '⚓';
+  position: absolute;
+  font-size: 300px;
+  opacity: 0.04;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.cta-section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.cta-section p {
+  color: var(--gray);
+  max-width: 560px;
+  margin: 0 auto 32px;
+  font-size: 17px;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #060e1a;
+  color: rgba(248,246,240,0.7);
+  padding: 70px 0 0;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 48px;
+  padding-bottom: 50px;
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.footer-col p { font-size: 14px; line-height: 1.7; }
+.footer-col h4 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul li a {
+  font-size: 14px;
+  color: rgba(248,246,240,0.6);
+  transition: var(--transition);
+}
+.footer-col ul li a:hover { color: var(--gold); }
+.footer-bottom {
+  border-top: 1px solid rgba(200,168,75,0.1);
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(248,246,240,0.35);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ===== PAGE HERO (inner pages) ===== */
+.page-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--blue) 100%);
+  padding: 130px 0 70px;
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(200,168,75,0.07) 0%, transparent 60%);
+}
+.page-hero .container { position: relative; z-index: 1; }
+.page-hero-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.page-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 62px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  max-width: 700px;
+}
+.page-hero p {
+  color: var(--gray);
+  font-size: 17px;
+  max-width: 580px;
+  margin-top: 16px;
+}
+
+/* ===== GENERAL PAGE CONTENT ===== */
+.page-content { padding: 80px 0; }
+.content-block { margin-bottom: 60px; }
+.content-block h2 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 18px;
+  color: var(--navy);
+}
+.content-block p { color: #4a5a70; font-size: 16px; margin-bottom: 14px; }
+
+/* ===== CARDS GRID ===== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.card {
+  background: var(--light-bg);
+  border-radius: 10px;
+  padding: 32px;
+  border: 1px solid rgba(10,22,40,0.08);
+  transition: var(--transition);
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.card-icon { font-size: 36px; margin-bottom: 16px; }
+.card h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: var(--navy);
+}
+.card p { font-size: 14px; color: #5a6a7a; }
+
+/* ===== FORM ===== */
+.form-section { padding: 80px 0; background: var(--light-bg); }
+.form-wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--white);
+  padding: 48px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+.form-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  color: var(--navy);
+}
+.form-subtitle { color: #6a7a8a; font-size: 15px; margin-bottom: 32px; }
+.form-group { margin-bottom: 22px; }
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--navy);
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #d8dde6;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--navy);
+  background: var(--white);
+  transition: var(--transition);
+  outline: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(26,74,138,0.1);
+}
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-submit {
+  width: 100%;
+  padding: 15px;
+  background: var(--navy);
+  color: var(--gold);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.form-submit:hover { background: var(--blue); transform: translateY(-2px); }
+
+/* ===== TABLE ===== */
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  background: var(--navy);
+  color: var(--gold);
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+td { padding: 14px 18px; border-bottom: 1px solid #e8ecf0; color: #3a4a5a; }
+tr:hover td { background: var(--light-bg); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .ql-grid { grid-template-columns: repeat(2, 1fr); }
+  .training-grid { grid-template-columns: repeat(2, 1fr); }
+  .news-grid { grid-template-columns: 1fr 1fr; }
+  .news-card.featured { grid-column: 1 / -1; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+}
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    flex-direction: column;
+    padding: 20px;
+    gap: 4px;
+    border-bottom: 1px solid rgba(200,168,75,0.2);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li a { display: block; padding: 12px 16px; font-size: 15px; }
+  .hero-stats { flex-direction: column; gap: 0; }
+  .stat { border-right: none; border-bottom: 1px solid rgba(200,168,75,0.2); }
+  .two-col { grid-template-columns: 1fr; gap: 36px; }
+  .training-grid { grid-template-columns: 1fr; }
+  .news-grid { grid-template-columns: 1fr; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .form-row { grid-template-columns: 1fr; }
+  .form-wrapper { padding: 28px 20px; }
+}
+@media (max-width: 480px) {
+  .ql-grid { grid-template-columns: 1fr; }
+  .hero-btns { flex-direction: column; }
+  .btn { text-align: center; }
+}
+</style>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">⚓</span>
+      <div class="logo-text"><span class="logo-main">ECA</span><span class="logo-sub">Ethiopian Cadet Association</span></div>
+    </a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="courses.html">Training & Courses</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="jobs.html">Job Board</a></li>
+      <li><a href="news.html">News & Events</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-cta">Join Us</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-tag">Our Story</span>
+    <h1>About the Ethiopian Cadet Association</h1>
+    <p>A new professional platform built to close the gap between Ethiopian maritime training and real career opportunity.</p>
+  </div>
+</section>
+
+<section class="page-content">
+  <div class="container">
+
+    <div class="content-block fade-in">
+      <div class="two-col">
+        <div class="col-text">
+          <span class="section-tag">Our Mission</span>
+          <h2>Empowering Ethiopia's Maritime Workforce</h2>
+          <p>The Ethiopian Cadet Association (ECA) was founded in 2026 to give Ethiopian maritime cadets, officers, and instructors a professional home — a single place to register, build a verified profile, find work during the months between sea contracts, and access training that helps them advance their careers.</p>
+          <p>Ethiopia trains skilled, internationally certified maritime professionals every year. Yet between contracts, that talent often sits idle with no structured way to earn an income or stay professionally active. ECA exists to solve that specific problem — connecting cadets and officers with local Ethiopian companies, training providers, and each other.</p>
+        </div>
+        <div class="col-visual">
+          <div class="visual-card">
+            <div class="vc-item">🎯 Mission: Connect Ethiopian maritime talent to real opportunity, on land and at sea</div>
+            <div class="vc-item">👁 Vision: A maritime community where no skilled cadet sits idle between contracts</div>
+            <div class="vc-item">⚓ Values: Integrity, Opportunity, Community, Growth</div>
+            <div class="vc-item">📅 Founded: 2026 — a new, growing initiative</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block fade-in">
+      <span class="section-tag">What We Do</span>
+      <h2>Our Core Activities</h2>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">⚓</div>
+          <h3>Member Registration</h3>
+          <p>Cadets, officers, instructors, and companies create a verified profile on the ECA platform — the foundation for everything else we offer.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">💼</div>
+          <h3>Between-Contract Employment</h3>
+          <p>Our job board connects cadets and officers with local Ethiopian companies for short-term work during the gap between sea contracts.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎓</div>
+          <h3>Training &amp; Courses</h3>
+          <p>Instructors and maritime experts submit Pre-Sea training, Post-Sea training, and online courses that members can browse and enroll in directly.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🤝</div>
+          <h3>Professional Networking</h3>
+          <p>ECA is building a growing community of Ethiopian maritime professionals who can connect, share opportunities, and support one another's careers.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📰</div>
+          <h3>Career Resources</h3>
+          <p>News, events, and career guidance to help members stay informed and plan their progression from Cadet to Senior Officer.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏢</div>
+          <h3>Company Partnerships</h3>
+          <p>We work directly with Ethiopian companies to help them discover and hire disciplined, internationally trained maritime talent for short-term roles.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block fade-in" style="background:var(--navy);border-radius:14px;padding:56px;color:white;">
+      <span class="section-tag">Who's Behind ECA</span>
+      <h2 style="color:var(--gold);font-family:var(--font-display);font-size:32px;margin-bottom:24px;">A Founder-Led Initiative</h2>
+      <p style="color:var(--gray);font-size:15px;max-width:700px;margin:0 auto 16px;text-align:center">ECA was founded and is currently run by a single founder passionate about solving a real problem in Ethiopia's maritime industry. As the platform and community grow, ECA's team will grow with it.</p>
+      <p style="color:var(--gray);font-size:15px;max-width:700px;margin:0 auto;text-align:center">We're actively building relationships with maritime training institutions and local companies to expand what ECA can offer its members.</p>
+    </div>
+
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <h2>Become a Member Today</h2>
+    <p>Join Ethiopian maritime professionals who are building their careers with ECA from day one.</p>
+    <a href="register.html" class="btn btn-primary btn-lg">Register Now</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-col"><div class="footer-logo">⚓ ECA</div><p>Ethiopian Cadet Association — Maritime Excellence.</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="about.html">About</a></li><li><a href="courses.html">Training &amp; Courses</a></li><li><a href="employment.html">Employment</a></li>
+      <li><a href="jobs.html">Job Board</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="news.html">News & Events</a></li><li><a href="news.html">News & Events</a></li><li><a href="contact.html">Contact</a></li><li><a href="register.html">Membership</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><p>📧 infoethiopiancadets@gmail.com</p><p>📞 +251 905 121 322</p><p>📍 Addis Ababa, Ethiopia</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2025 Ethiopian Cadet Association. All rights reserved.</p></div>
+</footer>
+<script>// ===== NAVBAR SCROLL EFFECT =====
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,0.3)';
+  } else {
+    navbar.style.boxShadow = 'none';
+  }
+});
+
+// ===== HAMBURGER MENU =====
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+if (hamburger && navLinks) {
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+    hamburger.classList.toggle('active');
+  });
+  // Close menu when a link is clicked
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+    });
+  });
+}
+
+// ===== SCROLL FADE-IN ANIMATION =====
+const fadeEls = document.querySelectorAll('.fade-in');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+fadeEls.forEach(el => observer.observe(el));
+
+// ===== FORM SUBMISSION (Contact & Register) =====
+const forms = document.querySelectorAll('form[data-form]');
+forms.forEach(form => {
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = form.querySelector('.form-submit');
+    const originalText = btn.textContent;
+    btn.textContent = '✓ Submitted Successfully!';
+    btn.style.background = '#2a7a4a';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+      btn.disabled = false;
+      form.reset();
+    }, 4000);
+  });
+});
+
+// ===== ACTIVE NAV LINK =====
+const currentPath = window.location.pathname.split('/').pop();
+document.querySelectorAll('.nav-links a').forEach(link => {
+  const linkPath = link.getAttribute('href').split('/').pop();
+  if (currentPath === linkPath) {
+    link.classList.add('active');
+  } else if (currentPath === '' && linkPath === 'index.html') {
+    link.classList.add('active');
+  }
+});
+</script>
+</body>
+</html>
