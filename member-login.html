@@ -465,7 +465,7 @@
   async function resetPassword() {
     const email = document.getElementById('resetEmail').value.trim();
     if (!email) return;
-    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: 'https://yabt16.github.io/member-login.html' });
+const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: 'https://ethiopiancadets.github.io/ECA/member-login.html' });
     if (error) { document.getElementById('resetError').textContent = error.message; document.getElementById('resetError').style.display = 'block'; }
     else { document.getElementById('resetSuccess').style.display = 'block'; }
   }
