@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,6 +92,15 @@
     .modal-title{font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--navy);margin-bottom:8px;line-height:1.2;}
     .modal-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--gray);margin-bottom:16px;}
     .modal-content{font-size:15px;color:#3a4a5a;line-height:1.8;white-space:pre-wrap;}
+    .article-heading{display:flex;align-items:center;gap:14px;margin:28px 0 14px;}
+    .article-heading:first-child{margin-top:0;}
+    .article-heading .num-badge{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--gold-light);font-family:var(--font-display);font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;}
+    .article-heading .heading-text{font-family:var(--font-display);font-weight:700;font-size:19px;color:var(--navy);}
+    .article-p{color:#3a4a5a;line-height:1.8;margin-bottom:14px;}
+    .article-bullets{list-style:none;margin:0 0 16px;padding:0;}
+    .article-bullets li{position:relative;padding-left:26px;margin-bottom:8px;color:#3a4a5a;line-height:1.6;}
+    .article-bullets li::before{content:'';position:absolute;left:2px;top:9px;width:8px;height:8px;background:var(--gold);border-radius:2px;transform:rotate(45deg);}
+    .article-highlight{background:var(--light-bg);border-left:3px solid var(--gold);border-radius:6px;padding:12px 16px;margin:0 0 16px;color:var(--navy);font-weight:600;font-style:italic;}
     .modal-event-box{background:var(--light-bg);border-radius:10px;padding:16px 20px;margin-bottom:20px;}
     .modal-event-box h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
     .event-detail{font-size:14px;color:#4a5a70;margin-bottom:4px;}
@@ -351,8 +361,44 @@
       document.getElementById('detailEventBox').style.display = 'none';
     }
 
-    document.getElementById('detailContent').textContent = p.content;
+    document.getElementById('detailContent').innerHTML = renderArticleContent(p.content);
     document.getElementById('detailModal').classList.add('open');
+  }
+
+  // Turns plain-text article content into styled sections using the
+  // site's color theme. All text is escaped via escHtml — only the
+  // structure (headings/bullets/highlights) is generated as HTML,
+  // so this stays safe even for publicly-submitted posts.
+  function renderArticleContent(text) {
+    const lines = (text || '').split('\n');
+    let html = '';
+    let bulletBuffer = [];
+    const flushBullets = () => {
+      if (bulletBuffer.length) {
+        html += `<ul class="article-bullets">${bulletBuffer.map(b => `<li>${escHtml(b)}</li>`).join('')}</ul>`;
+        bulletBuffer = [];
+      }
+    };
+    for (let raw of lines) {
+      const line = raw.trim();
+      if (!line) { flushBullets(); continue; }
+      const headingMatch = line.match(/^(\d{1,2})\.\s+(.{1,90})$/);
+      const bulletMatch = line.match(/^[•\-\*]\s+(.+)/);
+      if (headingMatch) {
+        flushBullets();
+        html += `<div class="article-heading"><span class="num-badge">${escHtml(headingMatch[1])}</span><span class="heading-text">${escHtml(headingMatch[2])}</span></div>`;
+      } else if (bulletMatch) {
+        bulletBuffer.push(bulletMatch[1]);
+      } else if (/^(Remember|Note|Tip)[:]/i.test(line)) {
+        flushBullets();
+        html += `<div class="article-highlight">${escHtml(line)}</div>`;
+      } else {
+        flushBullets();
+        html += `<p class="article-p">${escHtml(line)}</p>`;
+      }
+    }
+    flushBullets();
+    return html;
   }
 
   function closeDetailModal() { document.getElementById('detailModal').classList.remove('open'); }
