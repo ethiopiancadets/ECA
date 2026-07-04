@@ -339,7 +339,7 @@
   </div>
 </div>
 
-<footer class="footer"><p>© 2025 Ethiopian Cadet Association. All rights reserved.</p></footer>
+<footer class="footer"><p>© 2026 Ethiopian Cadet Association. All rights reserved.</p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -389,7 +389,7 @@
     const configs = {
       pending:  { cls:'pending',  icon:'⏳', title:'Membership Pending Approval',    desc:'Your application is being reviewed. You will be notified once approved.' },
       approved: { cls:'approved', icon:'✅', title:'Membership Active — Welcome!',   desc:'Your ECA membership is active. Enjoy all member benefits.' },
-      rejected: { cls:'rejected', icon:'❌', title:'Membership Not Approved',        desc:'Please contact ECA at info@ethiopiancadet.org for more information.' }
+      rejected: { cls:'rejected', icon:'❌', title:'Membership Not Approved',        desc:'Please contact ECA at infoethiopiancadets@gmail.com for more information.' }
     };
     const s = configs[m.status] || configs.pending;
     const banner = document.getElementById('statusBanner');
@@ -465,7 +465,7 @@
   async function resetPassword() {
     const email = document.getElementById('resetEmail').value.trim();
     if (!email) return;
-const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: 'https://ethiopiancadets.github.io/ECA/member-login.html' });
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: 'https://yabt16.github.io/member-login.html' });
     if (error) { document.getElementById('resetError').textContent = error.message; document.getElementById('resetError').style.display = 'block'; }
     else { document.getElementById('resetSuccess').style.display = 'block'; }
   }
